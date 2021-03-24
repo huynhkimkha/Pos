@@ -1,0 +1,50 @@
+# do not use "latest" here, if you want this to work in the future
+image: docker:19
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - deploy
+
+# GLOBAL SCRIPT - before_script can be override on stages
+before_script:
+  - docker version
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+build-prod:
+  stage: build
+  only:
+    - master
+  script:
+    - docker build --build-arg PROFILE=prod --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --no-cache .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+deploy-to-prod:
+  variables:
+    KUBE_CLUSTER_NAME: $PROD_KUBE_CLUSTER_NAME
+    KUBE_USER_NAME: $PROD_KUBE_USER_NAME
+    KUBE_NAMESPACE: $PROD_KUBE_NAMESPACE
+    KUBE_NAME: agency
+    KUBE_USER_TOKEN: $PROD_USER_TOKEN
+    CONTAINER_MEM: "1Gi"
+    CONTAINER_CPU: "500m"
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+  image: baoch99/kubectl:1.16.10@sha256:726a76ded585ebe5649750be4a3baa00c8226f6c2dd01148e5cafba588e4f9da
+  before_script:
+    - ''
+  stage: deploy
+  only:
+    - master
+  script:
+    - cat $VLXD_CA_PEM > "${KUBE_CONFIG_PATH}/ca.pem"
+    - kubectl config set-cluster $KUBE_CLUSTER_NAME --server="$KUBE_SERVER" --certificate-authority="${KUBE_CONFIG_PATH}/ca.pem" --embed-certs=true
+    - kubectl config set-credentials $KUBE_USER_NAME --token="$KUBE_USER_TOKEN"
+    - kubectl config set-context $KUBE_CLUSTER_NAME --cluster="$KUBE_CLUSTER_NAME" --user="$KUBE_USER_NAME" --namespace="$KUBE_NAMESPACE"
+    - kubectl config use-context $KUBE_CLUSTER_NAME
+    - kubectl rollout restart deployment.apps/$KUBE_NAMESPACE-$KUBE_NAME
+    - sleep 5
+    - rm -rf $KUBE_CONFIG_PATH

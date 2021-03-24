@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $KUBE_NAMESPACE-$KUBE_NAME
+  namespace: $KUBE_NAMESPACE
+spec:
+  # The number of replicas (PODs) ard expected to init
+  replicas: 1
+
+  # Choose containers to create POD
+  selector:
+    matchLabels:
+      # Choose pod to init by template's label
+      app: $KUBE_NAMESPACE-$KUBE_NAME
+  template: # template of a pod
+    metadata:
+      labels:
+        app: $KUBE_NAMESPACE-$KUBE_NAME
+        tier: backend
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers: # Define containers in a pod
+        - name: $KUBE_NAMESPACE-$KUBE_NAME
+          # Pull image from hub to create container
+          image: $IMAGE_TAG
+          imagePullPolicy: Always
+          # Config resource
+          resources:
+            # Maximum resource that a container is allocated to use
+            limits:
+              memory: $CONTAINER_MEM
+              cpu: $CONTAINER_CPU
+            # Minimum resource that a container require to initialize
+            requests:
+              memory: $CONTAINER_MEM
+              cpu: $CONTAINER_CPU
+          ports:
+            - containerPort: 5556 # Port to access container
+              protocol: TCP

@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  # Mysql database
+  mysql-db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+    volumes:
+      - ./bm-db-migration/src/main/resources/db/init/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      inventory-agency-service-container:
+        aliases:
+          - mysql-db
+    restart: always
+
+  # Agency migration container
+  inventory-agency-migration:
+    container_name: inventory-agency-migration
+    build: ./bm-db-migration
+    networks:
+      - inventory-agency-service-container
+    depends_on:
+      - mysql-db
+
+  # Store service container   
+  inventory-agency-service:
+    container_name: inventory-agency-service
+    build: ./bm-start
+    ports:
+      # Port of container must map to port in PORT in dockerfile
+      - 5556:5556
+    networks:
+      - inventory-agency-service-container
+    depends_on:
+      - mysql-db
+  
+networks:
+  inventory-agency-service-container:
+    driver: bridge
