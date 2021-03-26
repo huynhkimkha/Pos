@@ -6,14 +6,11 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Data
 public class EmployeesDto {
     private String id;
-    private AgencyDto agency;
     @NotEmpty(message = "Tên nhân viên không được trống")
     private String fullName;
     @NotEmpty(message = "Email nhân viên không được trống")
@@ -23,10 +20,6 @@ public class EmployeesDto {
     private String password;
     private Date birthDate;
     public UserDto toUserDto() {
-        List<String> permissions = new ArrayList<>();
-
-        // Handle permission here
-
-        return new UserDto(this.fullName, this.email, this.password, permissions, null, null, UserModelEnum.EMPLOYEE);
+        return new UserDto(this.fullName, this.email, this.password, UserModelEnum.EMPLOYEE);
     }
 }

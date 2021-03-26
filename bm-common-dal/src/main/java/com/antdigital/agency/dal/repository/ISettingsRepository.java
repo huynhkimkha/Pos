@@ -9,8 +9,4 @@ import java.util.List;
 
 @Repository
 public interface ISettingsRepository extends JpaRepository<Settings, String> {
-    @Query("select t from Settings t where t.agency.id = ?1")
-    List<Settings> findAll(String agencyId);
-    @Query("select t from Settings t where t.key=?1")
-    Settings getByKey(String key);
 }

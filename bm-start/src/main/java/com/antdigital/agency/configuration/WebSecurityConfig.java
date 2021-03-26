@@ -58,18 +58,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static String[] anonymousRequest = {
             "/auth/login",
             "/setting/findAll",
-            "/collaborator/register",
-            "/auth/login-collaborator",
-            "/validate/check-exist-collaborator-employee\\?(.*)",
-            "/validate/check-exist-collaborator-phone\\?(.*)",
-            "/validate/check-exist-collaborator-email\\?(.*)",
-            "/agency/getByCompanyId(.*)",
-            "/agency/findOne(.*)",
-            "/employee/findOne(.*)",
-            "/collaborator/findOne(.*)",
-            "/software/company/getByNameSlug\\?(.*)",
-            "/software/company/getLikeNameOrSlugName\\?(.*)",
-            "/software/company-license/validateLicense(.*)",
     };
 
     @Bean

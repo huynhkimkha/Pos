@@ -6,7 +6,6 @@ import java.util.Date;
 @Data
 public class SettingsDto {
     private Integer id;
-    private AgencyDto agency;
     private String label;
     private String key;
     private String values;

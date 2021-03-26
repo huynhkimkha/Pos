@@ -22,41 +22,26 @@ public class UserPrinciple implements UserDetails {
     @JsonIgnore
     private String password;
 
-    private String agencyId;
-
-    private String companyId;
-
     private UserModelEnum userModel;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrinciple(String username, String email, String password, String agencyId, String companyId, UserModelEnum userModel,
+    public UserPrinciple(String username, String email, String password, UserModelEnum userModel,
                          Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
-        this.agencyId = agencyId;
-        this.companyId = companyId;
         this.userModel = userModel;
     }
 
     public static UserPrinciple build(UserDto user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        List<String> permissions = user.getPermissions();
-
-        if (permissions != null) {
-            for(String permission : permissions) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + permission));
-            }
-        }
 
         return new UserPrinciple(
                 user.getEmail(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getAgencyId(),
-                user.getCompanyId(),
                 user.getUserModel(),
                 authorities
         );
@@ -70,14 +55,6 @@ public class UserPrinciple implements UserDetails {
     @Override
     public String getPassword() {
         return password;
-    }
-
-    public String getAgencyId() {
-        return agencyId;
-    }
-
-    public String getCompanyId() {
-        return companyId;
     }
 
     @Override

@@ -36,8 +36,6 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .claim("password", userPrincipal.getPassword())
                 .claim("permissions", userPrincipal.getAuthorities())
-                .claim("agencyId", userPrincipal.getAgencyId())
-                .claim("companyId", userPrincipal.getCompanyId())
                 .compact();
     }
 
@@ -78,20 +76,6 @@ public class JwtProvider {
         }
 
         return permissions;
-    }
-
-    public String getAgencyIdFromJwtToken(String token) {
-        return (String) Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody().setSubject("agencyId").get("agencyId");
-    }
-
-    public String getCompanyIdFromJwtToken(String token) {
-        return (String) Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody().setSubject("companyId").get("companyId");
     }
 
     public boolean validateJwtToken(String authToken) {

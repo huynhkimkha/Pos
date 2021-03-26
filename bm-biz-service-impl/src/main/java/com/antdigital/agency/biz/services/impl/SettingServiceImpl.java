@@ -1,6 +1,5 @@
 package com.antdigital.agency.biz.services.impl;
 
-import com.antdigital.agency.common.enums.SettingKeysEnum;
 import com.antdigital.agency.dal.entity.Settings;
 import com.antdigital.agency.dal.repository.ISettingsRepository;
 import com.antdigital.agency.dtos.response.SettingsDto;
@@ -22,8 +21,8 @@ public class SettingServiceImpl implements ISettingService {
     private ISettingsRepository settingsRepository;
 
     @Override
-    public List<SettingsDto> findAll(String agencyId) {
-        List<Settings> settings = settingsRepository.findAll(agencyId);
+    public List<SettingsDto> findAll() {
+        List<Settings> settings = settingsRepository.findAll();
         return ISettingsDtoMapper.INSTANCE.toSettingsDtoList(settings);
     }
 
@@ -40,18 +39,6 @@ public class SettingServiceImpl implements ISettingService {
             List<Settings> updatedSettings = settingsRepository.saveAll(settings);
 
             return ISettingsDtoMapper.INSTANCE.toSettingsDtoList(updatedSettings);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            logger.error(ex.getStackTrace().toString());
-            return null;
-        }
-    }
-
-    @Override
-    public SettingsDto getWarehouseId() {
-        try {
-            Settings setting = settingsRepository.getByKey(SettingKeysEnum.AGENCY.toString());
-            return ISettingsDtoMapper.INSTANCE.toSettingsDto(setting);
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             logger.error(ex.getStackTrace().toString());

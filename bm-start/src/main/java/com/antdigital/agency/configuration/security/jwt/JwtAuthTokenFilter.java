@@ -38,16 +38,11 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
             String jwt = getJwt(request);
             UserDto userModel = new UserDto();
-            userModel.setAgencyId(getAgencyId(request));
-            userModel.setCompanyId(getCompanyId(request));
 
             if (jwt != null && tokenProvider.validateJwtToken(jwt)) {
                 String userName = tokenProvider.getUserNameFromJwtToken(jwt);
                 userModel.setEmail(userName);
                 userModel.setPassword(tokenProvider.getPasswordFromJwtToken(jwt));
-                userModel.setPermissions(tokenProvider.getPermissionsFromJwToken(jwt));
-                userModel.setAgencyId(tokenProvider.getAgencyIdFromJwtToken(jwt));
-                userModel.setCompanyId(tokenProvider.getCompanyIdFromJwtToken(jwt));
             }
 
             UserPrinciple userPrinciple = UserPrinciple.build(userModel);

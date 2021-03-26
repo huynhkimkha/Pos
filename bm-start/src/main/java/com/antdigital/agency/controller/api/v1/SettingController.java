@@ -20,15 +20,9 @@ public class SettingController extends BaseController {
     @Autowired
     private ISettingService settingService;
 
-    @GetMapping("/warehouseId")
-    public ResponseEntity<?> getWarehouseId() {
-        SettingsDto settingsDto = settingService.getWarehouseId();
-        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Tải cài đặt thành công!"), HttpStatus.OK.value(), settingsDto));
-    }
-
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll() {
-        List<SettingsDto> settingsDtos = settingService.findAll(this.getAgencyId());
+        List<SettingsDto> settingsDtos = settingService.findAll();
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Tải cài đặt thành công!"), HttpStatus.OK.value(), settingsDtos));
     }
 

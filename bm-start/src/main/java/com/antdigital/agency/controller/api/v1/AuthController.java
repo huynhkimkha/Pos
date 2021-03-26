@@ -1,7 +1,5 @@
 package com.antdigital.agency.controller.api.v1;
 
-import com.antdigital.agency.common.enums.ActivatedStatusEnum;
-import com.antdigital.agency.common.enums.BlockStatusEnum;
 import com.antdigital.agency.common.enums.UserModelEnum;
 import com.antdigital.agency.common.utils.BCryptHelper;
 import com.antdigital.agency.configuration.security.jwt.JwtProvider;
@@ -9,7 +7,6 @@ import com.antdigital.agency.configuration.security.jwt.UserPrinciple;
 import com.antdigital.agency.dtos.request.LoginDto;
 import com.antdigital.agency.dtos.response.*;
 import com.antdigital.agency.dtos.response.security.UserDto;
-import com.antdigital.agency.services.ICollaboratorService;
 import com.antdigital.agency.services.IEmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +34,6 @@ public class AuthController {
     @Autowired
     private IEmployeeService employeeService;
 
-    @Autowired
-    private ICollaboratorService collaboratorService;
-
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     public AuthController() {
@@ -49,47 +43,13 @@ public class AuthController {
     public ResponseEntity<?> login(HttpServletRequest request, @Valid @RequestBody LoginDto user) {
         logger.info("login api");
 
-        EmployeeFullDto employeesDto = employeeService.getEmployeeFull(user.getUsername(), user.getCompanyId());
+        EmployeesDto employeesDto = employeeService.getEmployeeByEmail(user.getUsername());
         if(employeesDto == null || !BCryptHelper.check(user.getPassword(), employeesDto.getPassword())) {
             return ResponseEntity.ok(new ResponseDto(Arrays.asList("Tên đăng nhập hoặc password không đúng"), HttpStatus.BAD_GATEWAY.value(), ""));
         }
 
         UserDto userDto = employeesDto.toUserDto();
-        userDto.setCompanyId(user.getCompanyId());
         userDto.setUserModel(UserModelEnum.EMPLOYEE);
-        UserPrinciple userDetail = UserPrinciple.build(userDto);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                userDetail, null, userDetail.getAuthorities());
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtProvider.generateJwtToken(SecurityContextHolder.getContext().getAuthentication());
-
-        // Reset password
-        userDto.setPassword("");
-
-        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Đăng nhập thành công"), HttpStatus.OK.value(), new JwtResponseDto(jwt, userDto)));
-    }
-
-    @PostMapping("/login-collaborator")
-    public ResponseEntity<?> loginCollaborator(HttpServletRequest request, @Valid @RequestBody LoginDto user) {
-        logger.info("login collaborator api");
-
-        CollaboratorDto collaboratorDto = collaboratorService.getByEmail(user.getUsername(), user.getCompanyId());
-        if(collaboratorDto == null || !BCryptHelper.check(user.getPassword(), collaboratorDto.getPassword())) {
-            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Tên đăng nhập hoặc password không đúng"), HttpStatus.BAD_GATEWAY.value(), ""));
-        }
-
-        if(collaboratorDto.getActivatedStatus() != ActivatedStatusEnum.ACTIVATED) {
-            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Tài khoản chưa được kích hoạt"), HttpStatus.BAD_GATEWAY.value(), ""));
-        }
-
-        if(collaboratorDto.getBlockedStatus() != BlockStatusEnum.APPROVED) {
-            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Tài khoản đã bị khoá"), HttpStatus.BAD_GATEWAY.value(), ""));
-        }
-
-        UserDto userDto = collaboratorDto.toUserDto();
-        userDto.setCompanyId(user.getCompanyId());
-
         UserPrinciple userDetail = UserPrinciple.build(userDto);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetail, null, userDetail.getAuthorities());
