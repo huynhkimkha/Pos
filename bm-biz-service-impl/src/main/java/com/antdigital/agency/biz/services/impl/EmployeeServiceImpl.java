@@ -1,5 +1,6 @@
 package com.antdigital.agency.biz.services.impl;
 
+import com.antdigital.agency.common.utils.UUIDHelper;
 import com.antdigital.agency.dal.entity.*;
 import com.antdigital.agency.dal.repository.*;
 import com.antdigital.agency.dtos.request.BaseSearchDto;
@@ -66,6 +67,51 @@ public class EmployeeServiceImpl implements IEmployeeService {
             Employees employee = employeesRepository.findById(id).get();
             EmployeesDto employeeDto = IEmployeesDtoMapper.INSTANCE.toEmployeesDto(employee);
             return employeeDto;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            logger.error(ex.getStackTrace().toString());
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteEmployee(String id) {
+        try {
+            employeesRepository.deleteById(id);
+            return true;
+        }  catch (Exception ex) {
+            logger.error(ex.getMessage());
+            logger.error(ex.getStackTrace().toString());
+            return false;
+        }
+    }
+
+    @Override
+    @Transactional
+    public EmployeesDto insert(EmployeesDto employeesDto) {
+        try {
+            Employees employees = IEmployeesDtoMapper.INSTANCE.toEmployees(employeesDto);
+            employees.setId(UUIDHelper.generateType4UUID().toString());
+            Employees createdEmployee = employeesRepository.save(employees);
+            employeesDto.setId(createdEmployee.getId());
+            return employeesDto;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            logger.error(ex.getStackTrace().toString());
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional
+    public EmployeesDto update(EmployeesDto employeesDto) {
+        try {
+            Employees old = employeesRepository.findById(employeesDto.getId()).get();
+            Employees employees = IEmployeesDtoMapper.INSTANCE.toEmployees(employeesDto);
+            employees.setPassword(old.getPassword());
+            employeesRepository.save(employees);
+            return employeesDto;
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             logger.error(ex.getStackTrace().toString());

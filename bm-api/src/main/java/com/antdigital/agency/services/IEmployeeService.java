@@ -10,4 +10,7 @@ public interface IEmployeeService {
     List<EmployeesDto> findAll();
     EmployeesDto getEmployeeByEmail(String email);
     EmployeesDto getEmployeeById(String id);
+    EmployeesDto update(EmployeesDto employeeFullDto);
+    EmployeesDto insert(EmployeesDto employeeFullDto);
+    boolean deleteEmployee(String id);
 }
