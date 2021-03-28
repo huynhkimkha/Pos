@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +48,7 @@ public class EmployeeController extends BaseController {
 
 
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(HttpServletRequest request, @Valid @RequestBody EmployeesDto employeesDto) throws IOException, JAXBException {
+    public ResponseEntity<?> insert( @Valid @RequestBody EmployeesDto employeesDto) {
         // Validation before saving
         List<String> errMessages = validateInserting(employeesDto);
         if(errMessages.size() > 0) {
@@ -90,11 +87,20 @@ public class EmployeeController extends BaseController {
 
     private List<String> validateUpdating(EmployeesDto employeesDto){
         List<String> result = new ArrayList<>();
+        // Skip if id is same
+        EmployeesDto employeesEmail  = employeeService.getEmployeeByEmail(employeesDto.getEmail());
+        if(employeesEmail != null && !employeesEmail.getId().equals(employeesDto.getId())) {
+            result.add("Email nhân viên đã tồn tại");
+        }
         return result;
     }
 
-    private List<String> validateInserting(EmployeesDto employeesDto) throws IOException, JAXBException {
+    private List<String> validateInserting(EmployeesDto employeesDto){
         List<String> result = new ArrayList<>();
+        EmployeesDto employeesEmail  = employeeService.getEmployeeByEmail(employeesDto.getEmail());
+        if(employeesEmail != null) {
+            result.add("Email nhân viên đã tồn tại");
+        }
         return result;
     }
 }
