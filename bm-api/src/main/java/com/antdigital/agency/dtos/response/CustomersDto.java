@@ -13,6 +13,7 @@ public class CustomersDto {
     private String address;
     @NotEmpty(message = "Số điện thoại không được trống")
     private String phone;
-    private Date created_date;
-    private Date updated_date;
+    private Date birthDate;
+    private Date createdDate;
+    private Date updatedDate;
 }

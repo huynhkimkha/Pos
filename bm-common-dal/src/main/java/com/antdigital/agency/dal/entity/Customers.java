@@ -17,6 +17,8 @@ public class Customers {
     private String address;
     @Column
     private String phone;
+    @Column(name = "birth_date")
+    private Date birthDate;
     @Column(name = "created_date")
     private Date createdDate;
     @Column(name = "updated_date")

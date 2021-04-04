@@ -1,5 +1,6 @@
 package com.antdigital.agency.common.enums;
 
-public enum UserModelEnum {
-    EMPLOYEE
+public enum RoleEnum {
+    STAFF,
+    MANAGER
 }
