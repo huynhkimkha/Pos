@@ -24,7 +24,7 @@ public class CustomerController extends BaseController {
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll() {
         List<CustomersDto> customers = customerService.findAll();
-        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Customers"), HttpStatus.OK.value(), customers));
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Khách hàng"), HttpStatus.OK.value(), customers));
     }
 
     @PostMapping("/find")
@@ -36,7 +36,7 @@ public class CustomerController extends BaseController {
     @GetMapping("/findOne")
     public ResponseEntity<?> findOne(@RequestParam String id) {
         CustomersDto customerDto = customerService.getCustomerById(id);
-        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Customer"), HttpStatus.OK.value(), customerDto));
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Khách hàng"), HttpStatus.OK.value(), customerDto));
     }
 
     @PostMapping("/insert")

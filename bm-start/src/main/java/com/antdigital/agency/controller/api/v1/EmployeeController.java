@@ -43,7 +43,7 @@ public class EmployeeController extends BaseController {
     @GetMapping("/getEmployeeByEmail")
     public ResponseEntity<?> getEmployeeByEmail(@RequestParam String email) {
         EmployeesDto employeesEmail = employeeService.getEmployeeByEmail(email);
-        return ResponseEntity.ok(new ResponseDto(Arrays.asList("EmployeesEmail"), HttpStatus.OK.value(), employeesEmail));
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nhân viên"), HttpStatus.OK.value(), employeesEmail));
     }
 
 

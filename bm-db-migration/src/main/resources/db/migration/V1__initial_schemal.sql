@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `employees` (
 
 -- pass: 123456
 INSERT INTO employees(id, full_name, birth_date, email, password, role)
-VALUES('f7887a85-1e83-55f1-86d0-b3574b7fe3eb', 'Admin', '2020-04-24', 'pkt@pos.com', '$2a$09$DlFMW.ofkjNQXaNhPp7ug..kWu5i3jSacX7w1HcKdm9cd6xq4C8FC', 'Admin');
+VALUES('f7887a85-1e83-55f1-86d0-b3574b7fe3eb', 'Admin', '2020-04-24', 'pkt@pos.com', '$2a$09$DlFMW.ofkjNQXaNhPp7ug..kWu5i3jSacX7w1HcKdm9cd6xq4C8FC', 'MANAGER');
 
 CREATE TABLE IF NOT EXISTS `customers` (
     `id` varchar(50) NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `bills` (
     `employee_id` varchar(50) NOT NULL,
     `customer_id` varchar(50),
     `promotion_id` varchar(50),
-    `agency_id` varchar(50) NOT NULL,
+    `agency_id` varchar(50),
     `code` varchar(50),
     `number` varchar(50),
     `description` varchar(225),
@@ -118,10 +118,13 @@ CREATE TABLE IF NOT EXISTS `agency` (
     `updated_date` DATETIME,
     PRIMARY KEY (id)
 );
+INSERT INTO agency(id, `name`, address, org_code) VALUES
+('bfbd7f9d-f880-4076-a342-eeceba11dcfa', 'HQSV_DHSG', '273 An Dương Vương, Quận 5, TPHCM', '');
+
 
 CREATE TABLE IF NOT EXISTS `cost` (
     `id` varchar(50) NOT NULL,
-    `agency_id` varchar(50) NOT NULL,
+    `agency_id` varchar(50),
     `type_cost` varchar(225),
     `amount` float,
     `description` varchar(225),
