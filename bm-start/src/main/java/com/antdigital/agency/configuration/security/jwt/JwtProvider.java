@@ -78,6 +78,13 @@ public class JwtProvider {
         return permissions;
     }
 
+    public String getPermissionFromJwToken(String token) {
+        return (String)Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody().setSubject("role").get("role");
+    }
+
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);

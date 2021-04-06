@@ -25,6 +25,6 @@ public class EmployeesDto {
     private Date createdDate;
     private Date updatedDate;
     public UserDto toUserDto() {
-        return new UserDto(this.fullName, this.email, this.password, UserModelEnum.EMPLOYEE);
+        return new UserDto(this.fullName, this.email, this.password, UserModelEnum.EMPLOYEE, this.role.toString());
     }
 }

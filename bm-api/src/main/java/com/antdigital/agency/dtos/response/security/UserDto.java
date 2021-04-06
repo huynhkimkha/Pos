@@ -1,5 +1,6 @@
 package com.antdigital.agency.dtos.response.security;
 
+import com.antdigital.agency.common.enums.RoleEnum;
 import com.antdigital.agency.common.enums.UserModelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,4 +14,5 @@ public class UserDto {
     private String email;
     private String password;
     private UserModelEnum userModel;
+    private String role;
 }

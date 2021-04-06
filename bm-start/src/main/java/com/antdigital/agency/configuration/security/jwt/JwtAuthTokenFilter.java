@@ -43,6 +43,7 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
                 String userName = tokenProvider.getUserNameFromJwtToken(jwt);
                 userModel.setEmail(userName);
                 userModel.setPassword(tokenProvider.getPasswordFromJwtToken(jwt));
+                userModel.setRole(tokenProvider.getPermissionFromJwToken(jwt));
             }
 
             UserPrinciple userPrinciple = UserPrinciple.build(userModel);

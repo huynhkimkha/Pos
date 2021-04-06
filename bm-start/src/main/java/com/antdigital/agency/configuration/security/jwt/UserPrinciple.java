@@ -37,7 +37,8 @@ public class UserPrinciple implements UserDetails {
 
     public static UserPrinciple build(UserDto user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-
+        String permission = user.getRole();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + permission));
         return new UserPrinciple(
                 user.getEmail(),
                 user.getEmail(),

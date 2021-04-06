@@ -28,14 +28,6 @@ CREATE TABLE IF NOT EXISTS `customers` (
 INSERT INTO customers(id, full_name, address, phone, birth_date) VALUES
 ('1dfd5e63-f1dd-445d-b83e-94070a01ec20', 'Huỳnh Kim Kha', '480 Mã Lò', '0378411656', '1999-11-11');
 
-CREATE TABLE IF NOT EXISTS `settings` (
-    `id` int NOT NULL AUTO_INCREMENT,
-    `label` varchar(225),
-    `key` varchar(225),
-    `value` varchar(225),
-    PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS `products` (
     `id` varchar(50) NOT NULL,
     `name` varchar(225),
