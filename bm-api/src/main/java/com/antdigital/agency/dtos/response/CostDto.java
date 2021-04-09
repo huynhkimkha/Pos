@@ -9,6 +9,7 @@ import java.util.Date;
 
 public class CostDto {
     private String id;
+    private AgencyDto agency;
     private TypeCostEnum typeCost;
     private float amount;
     private String description;

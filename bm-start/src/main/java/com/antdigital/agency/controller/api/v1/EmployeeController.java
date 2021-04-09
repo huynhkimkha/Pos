@@ -23,7 +23,7 @@ public class EmployeeController extends BaseController {
 
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll() {
-        List<EmployeesDto> employees = employeeService.findAll();
+        List<EmployeesDto> employees = employeeService.findAll(this.getAgencyId());
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nhân viên"), HttpStatus.OK.value(), employees));
     }
 
@@ -36,7 +36,7 @@ public class EmployeeController extends BaseController {
 
     @PostMapping("/find")
     public ResponseEntity<?> find(@RequestBody BaseSearchDto<List<EmployeesDto>> searchDto) {
-        BaseSearchDto<List<EmployeesDto>> search = employeeService.findAll(searchDto);
+        BaseSearchDto<List<EmployeesDto>> search = employeeService.findAll(searchDto, this.getAgencyId());
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nhân viên"), HttpStatus.OK.value(), search));
     }
 
@@ -49,6 +49,11 @@ public class EmployeeController extends BaseController {
 
     @PostMapping("/insert")
     public ResponseEntity<?> insert( @Valid @RequestBody EmployeesDto employeesDto) {
+        if(employeesDto.getAgency() == null || employeesDto.getAgency().getId() == null || employeesDto.getAgency().getId().isEmpty()){
+            AgencyDto agencyDto = new AgencyDto();
+            agencyDto.setId(this.getAgencyId());
+            employeesDto.setAgency(agencyDto);
+        }
         // Validation before saving
         List<String> errMessages = validateInserting(employeesDto);
         if(errMessages.size() > 0) {
@@ -63,6 +68,11 @@ public class EmployeeController extends BaseController {
 
     @PutMapping("/update")
     public ResponseEntity<?> update(@Valid @RequestBody EmployeesDto employeesDto) {
+        if(employeesDto.getAgency() == null || employeesDto.getAgency().getId() == null || employeesDto.getAgency().getId().isEmpty()){
+            AgencyDto agencyDto = new AgencyDto();
+            agencyDto.setId(this.getAgencyId());
+            employeesDto.setAgency(agencyDto);
+        }
         // Validation before saving
         List<String> errMessages = validateUpdating(employeesDto);
         if(errMessages.size() > 0) {

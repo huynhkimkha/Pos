@@ -15,4 +15,5 @@ public class UserDto {
     private String password;
     private UserModelEnum userModel;
     private String role;
+    private String agencyId;
 }

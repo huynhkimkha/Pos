@@ -12,6 +12,7 @@ import java.util.Date;
 @Data
 public class EmployeesDto {
     private String id;
+    private AgencyDto agency;
     @NotEmpty(message = "Tên nhân viên không được trống")
     private String fullName;
     @NotEmpty(message = "Email nhân viên không được trống")
@@ -25,6 +26,6 @@ public class EmployeesDto {
     private Date createdDate;
     private Date updatedDate;
     public UserDto toUserDto() {
-        return new UserDto(this.fullName, this.email, this.password, UserModelEnum.EMPLOYEE, this.role.toString());
+        return new UserDto(this.fullName, this.email, this.password, UserModelEnum.EMPLOYEE, this.role.toString(), this.agency.getId());
     }
 }

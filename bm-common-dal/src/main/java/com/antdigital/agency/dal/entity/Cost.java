@@ -12,6 +12,9 @@ import java.util.Date;
 public class Cost {
     @Id
     private String id;
+    @ManyToOne
+    @JoinColumn(name = "agency_id")
+    private Agency agency;
     @Enumerated(EnumType.STRING)
     @Column(name="type_cost")
     private TypeCostEnum typeCost;

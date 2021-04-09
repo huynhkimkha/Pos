@@ -12,6 +12,9 @@ import java.util.Date;
 public class Employees {
     @Id
     private String id;
+    @ManyToOne
+    @JoinColumn(name = "agency_id")
+    private Agency agency;
     @Column(name="full_name")
     private String fullName;
     @Column

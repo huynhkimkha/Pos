@@ -1,6 +1,7 @@
 package com.antdigital.agency.controller.api.v1;
 
 import com.antdigital.agency.dtos.request.BaseSearchDto;
+import com.antdigital.agency.dtos.response.AgencyDto;
 import com.antdigital.agency.dtos.response.CostDto;
 import com.antdigital.agency.dtos.response.ResponseDto;
 import com.antdigital.agency.services.ICostService;
@@ -16,19 +17,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/cost")
-public class CostController {
+public class CostController extends BaseController{
     @Autowired
     private ICostService costService;
 
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll() {
-        List<CostDto> costs = costService.findAll();
+        List<CostDto> costs = costService.findAll(this.getAgencyId());
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Chi phí"), HttpStatus.OK.value(), costs));
     }
 
     @PostMapping("/find")
     public ResponseEntity<?> find(@RequestBody BaseSearchDto<List<CostDto>> searchDto) {
-        BaseSearchDto<List<CostDto>> search = costService.findAll(searchDto);
+        BaseSearchDto<List<CostDto>> search = costService.findAll(searchDto, this.getAgencyId());
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Chi phí"), HttpStatus.OK.value(), search));
     }
 
@@ -40,6 +41,11 @@ public class CostController {
 
     @PostMapping("/insert")
     public ResponseEntity<?> insert(@Valid @RequestBody CostDto costDto) {
+        if(costDto.getAgency() == null || costDto.getAgency().getId() == null || costDto.getAgency().getId().isEmpty()){
+            AgencyDto agencyDto = new AgencyDto();
+            agencyDto.setId(this.getAgencyId());
+            costDto.setAgency(agencyDto);
+        }
         List<String> errMessages = validateInserting(costDto);
         if(errMessages.size() > 0) {
             return ResponseEntity.ok(new ResponseDto(errMessages, HttpStatus.BAD_REQUEST.value(), ""));
@@ -55,6 +61,11 @@ public class CostController {
 
     @PutMapping("/update")
     public ResponseEntity<?> update(@Valid @RequestBody CostDto costDto) {
+        if(costDto.getAgency() == null || costDto.getAgency().getId() == null || costDto.getAgency().getId().isEmpty()){
+            AgencyDto agencyDto = new AgencyDto();
+            agencyDto.setId(this.getAgencyId());
+            costDto.setAgency(agencyDto);
+        }
         List<String> errMessages = validateUpdating(costDto);
         if(errMessages.size() > 0) {
             return ResponseEntity.ok(new ResponseDto(errMessages, HttpStatus.BAD_REQUEST.value(), ""));

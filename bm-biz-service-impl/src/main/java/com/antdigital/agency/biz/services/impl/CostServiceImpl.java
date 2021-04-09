@@ -26,15 +26,15 @@ public class CostServiceImpl implements ICostService {
     private ICostRepository costRepository;
 
     @Override
-    public List<CostDto> findAll() {
-        List<Cost> costs = costRepository.findAll();
+    public List<CostDto> findAll(String agencyId) {
+        List<Cost> costs = costRepository.findAllByAgency(agencyId);
         return ICostDtoMapper.INSTANCE.toCostDtoList(costs);
     }
 
     @Override
-    public BaseSearchDto<List<CostDto>> findAll(BaseSearchDto<List<CostDto>> searchDto) {
+    public BaseSearchDto<List<CostDto>> findAll(BaseSearchDto<List<CostDto>> searchDto, String agencyId) {
         if(searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
-            searchDto.setResult(this.findAll());
+            searchDto.setResult(this.findAll(agencyId));
             return searchDto;
         }
 
@@ -45,7 +45,7 @@ public class CostServiceImpl implements ICostService {
         PageRequest request = sort == null ? PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage())
                 : PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage(), sort);
 
-        Page<Cost> page = costRepository.findAll(request);
+        Page<Cost> page = costRepository.findAllPageByAgency(request, agencyId);
         searchDto.setTotalRecords(page.getTotalElements());
         searchDto.setResult(ICostDtoMapper.INSTANCE.toCostDtoList(page.getContent()));
 
