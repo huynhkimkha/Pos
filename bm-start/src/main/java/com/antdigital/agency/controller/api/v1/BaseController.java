@@ -23,4 +23,9 @@ public class BaseController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return (UserPrinciple) auth.getPrincipal();
     }
+
+    protected String getAgencyId() {
+        UserPrinciple userPrincipal = this.getUserPrinciple();
+        return userPrincipal.getAgencyId();
+    }
 }

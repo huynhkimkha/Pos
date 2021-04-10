@@ -27,8 +27,8 @@ public class EmployeeServiceImpl implements IEmployeeService {
 
     @Override
     @Transactional
-    public List<EmployeesDto> findAll() {
-        List<Employees> employees = employeesRepository.findAll();
+    public List<EmployeesDto> findAll(String agencyId) {
+        List<Employees> employees = employeesRepository.findAllByAgency(agencyId);
         return IEmployeesDtoMapper.INSTANCE.toEmployeesDtoList(employees);
     }
 
@@ -40,9 +40,9 @@ public class EmployeeServiceImpl implements IEmployeeService {
     }
 
     @Override
-    public BaseSearchDto<List<EmployeesDto>> findAll(BaseSearchDto<List<EmployeesDto>> searchDto) {
+    public BaseSearchDto<List<EmployeesDto>> findAll(BaseSearchDto<List<EmployeesDto>> searchDto, String agencyId) {
         if(searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
-            searchDto.setResult(this.findAll());
+            searchDto.setResult(this.findAll(agencyId));
             return searchDto;
         }
 
@@ -53,7 +53,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
         PageRequest request = sort == null ? PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage())
                 : PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage(), sort);
 
-        Page<Employees> page = employeesRepository.findAll(request);
+        Page<Employees> page = employeesRepository.findAllPageByAgency(request, agencyId);
         searchDto.setTotalRecords(page.getTotalElements());
         searchDto.setResult(IEmployeesDtoMapper.INSTANCE.toEmployeesDtoList(page.getContent()));
 

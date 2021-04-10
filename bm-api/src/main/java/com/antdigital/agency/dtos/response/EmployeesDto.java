@@ -1,5 +1,6 @@
 package com.antdigital.agency.dtos.response;
 
+import com.antdigital.agency.common.enums.RoleEnum;
 import com.antdigital.agency.common.enums.UserModelEnum;
 import com.antdigital.agency.dtos.response.security.UserDto;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Data
 public class EmployeesDto {
     private String id;
+    private AgencyDto agency;
     @NotEmpty(message = "Tên nhân viên không được trống")
     private String fullName;
     @NotEmpty(message = "Email nhân viên không được trống")
@@ -18,8 +20,12 @@ public class EmployeesDto {
     private String email;
     @NotEmpty(message = "Mật khẩu không được trống")
     private String password;
+    private String phone;
     private Date birthDate;
+    private RoleEnum role;
+    private Date createdDate;
+    private Date updatedDate;
     public UserDto toUserDto() {
-        return new UserDto(this.fullName, this.email, this.password, UserModelEnum.EMPLOYEE);
+        return new UserDto(this.fullName, this.email, this.password, UserModelEnum.EMPLOYEE, this.role.toString(), this.agency.getId());
     }
 }

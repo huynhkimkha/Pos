@@ -7,18 +7,16 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "customers")
-public class Customers {
+@Table(name = "agency")
+public class Agency {
     @Id
     private String id;
-    @Column(name="full_name")
-    private String fullName;
+    @Column
+    private String name;
     @Column
     private String address;
-    @Column
-    private String phone;
-    @Column(name = "birth_date")
-    private Date birthDate;
+    @Column(name="org_code")
+    private String orgCode;
     @Column(name = "created_date")
     private Date createdDate;
     @Column(name = "updated_date")

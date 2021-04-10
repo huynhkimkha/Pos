@@ -19,7 +19,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-
 public class CustomerServiceImpl implements ICustomerService {
     private static final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 

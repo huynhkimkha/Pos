@@ -1,14 +1,15 @@
 package com.antdigital.agency.dtos.response;
 
 import lombok.Data;
+
 import java.util.Date;
 
 @Data
-public class SettingsDto {
-    private Integer id;
-    private String label;
-    private String key;
-    private String values;
+public class AgencyDto {
+    private String id;
+    private String name;
+    private String address;
+    private String orgCode;
     private Date createdDate;
     private Date updatedDate;
 }
