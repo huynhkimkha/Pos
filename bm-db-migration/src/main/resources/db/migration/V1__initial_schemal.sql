@@ -34,3 +34,11 @@ CREATE TABLE IF NOT EXISTS `settings` (
     `value` varchar(225),
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS `categories` (
+    `id` varchar(50) NOT NULL,
+    `name` varchar(225) NOT NULL,
+    `created_date` DATETIME,
+    `updated_date` DATETIME,
+    PRIMARY KEY (id)
+);
