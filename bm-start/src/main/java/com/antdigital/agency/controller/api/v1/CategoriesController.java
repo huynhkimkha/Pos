@@ -36,17 +36,16 @@ public class CategoriesController extends BaseController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable String id) {
         CategoriesDto categoriesDto = categoriesService.getById(id);
-        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nhóm hàng hóa"), HttpStatus.OK.value(), categoriesDto));
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Danh mục"), HttpStatus.OK.value(), categoriesDto));
     }
 
     @GetMapping("/like-name")
     public ResponseEntity<?> getLikeName(@RequestParam String name) {
         List<CategoriesDto> categoriesDtoList = categoriesService.getLikeName(name);
-        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nhóm hàng hóa"), HttpStatus.OK.value(), categoriesDtoList));
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Danh mục"), HttpStatus.OK.value(), categoriesDtoList));
     }
 
     @PostMapping("/insert")
-    @RolesAllowed("MERCHANDISE_GROUP_MANAGEMENT")
     public ResponseEntity<?> insert(@Valid @RequestBody CategoriesDto categoriesDto) {
         List<String> errMessages = validateInserting(categoriesDto);
         if(errMessages.size() > 0) {
@@ -55,40 +54,36 @@ public class CategoriesController extends BaseController {
 
         CategoriesDto categoriesDto1 = categoriesService.insert(categoriesDto);
 
-        ResponseEntity<?> res = categoriesDto1 != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Lưu thông tin nhóm hàng hóa thành công"), HttpStatus.OK.value(), categoriesDto1))
-                : ResponseEntity.ok(new ResponseDto(Arrays.asList("Lỗi lưu thông tin hàng hóa"), HttpStatus.BAD_REQUEST.value(), ""));
+        ResponseEntity<?> res = categoriesDto1 != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Lưu thông tin danh mục thành công"), HttpStatus.OK.value(), categoriesDto1))
+                : ResponseEntity.ok(new ResponseDto(Arrays.asList("Lỗi lưu thông tin danh mục"), HttpStatus.BAD_REQUEST.value(), ""));
 
         return res;
     }
 
     @PutMapping("/update")
-    @RolesAllowed("MERCHANDISE_GROUP_MANAGEMENT")
-    public ResponseEntity<?> update(@Valid @RequestBody MerchandiseGroupDto merchandiseGroupDto) {
-        merchandiseGroupDto.setCompanyId(this.getCompanyId());
-
-        List<String> errMessages = validateUpdating(merchandiseGroupDto);
+    public ResponseEntity<?> update(@Valid @RequestBody CategoriesDto categoriesDto) {
+        List<String> errMessages = validateUpdating(categoriesDto);
         if(errMessages.size() > 0) {
             return ResponseEntity.ok(new ResponseDto(errMessages, HttpStatus.BAD_REQUEST.value(), ""));
         }
-        MerchandiseGroupDto merchandiseGroup = merchandiseGroupService.update(merchandiseGroupDto);
-        ResponseEntity<?> res = merchandiseGroup != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật thông tin nhóm hàng hóa thành công"), HttpStatus.OK.value(), merchandiseGroup))
-                : ResponseEntity.ok(new ResponseDto(Arrays.asList("Lỗi cập nhật thông tin nhóm hàng hóa"), HttpStatus.BAD_REQUEST.value(), ""));
+        CategoriesDto categoriesDto1 = categoriesService.update(categoriesDto);
+        ResponseEntity<?> res = categoriesDto1 != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật thông tin danh mục thành công"), HttpStatus.OK.value(), categoriesDto1))
+                : ResponseEntity.ok(new ResponseDto(Arrays.asList("Lỗi cập nhật thông tin danh mục"), HttpStatus.BAD_REQUEST.value(), ""));
 
         return res;
     }
 
     @DeleteMapping("/delete")
-    @RolesAllowed("MERCHANDISE_GROUP_MANAGEMENT")
     public ResponseEntity<?> delete(@RequestParam String id) {
         List<String> errMessages = validateDeleting(id);
         if(errMessages.size() > 0) {
             return ResponseEntity.ok(new ResponseDto(errMessages, HttpStatus.BAD_REQUEST.value(), ""));
         }
 
-        boolean result = merchandiseGroupService.delete(id);
+        boolean result = categoriesService.delete(id);
 
-        ResponseEntity<?> res = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Nhóm hàng hóa"), HttpStatus.OK.value(), result))
-                : ResponseEntity.ok(new ResponseDto(Arrays.asList("Lỗi xóa thông tin nhóm hàng hóa"), HttpStatus.BAD_REQUEST.value(), ""));
+        ResponseEntity<?> res = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Danh mục"), HttpStatus.OK.value(), result))
+                : ResponseEntity.ok(new ResponseDto(Arrays.asList("Lỗi xóa thông tin danh mục"), HttpStatus.BAD_REQUEST.value(), ""));
 
         return res;
     }
@@ -97,22 +92,22 @@ public class CategoriesController extends BaseController {
         List<String> result = new ArrayList<>();
         CategoriesDto categoriesDto1 = categoriesService.getByName(categoriesDto.getName());
         if (categoriesDto1 != null) {
-            result.add("Tên nhóm hàng hóa đã tồn tại");
+            result.add("Tên danh mục đã tồn tại");
         }
         return result;
     }
 
-    private List<String> validateUpdating(MerchandiseGroupDto merchandiseGroupDto){
+    private List<String> validateUpdating(CategoriesDto categoriesDto){
         List<String> result = new ArrayList<>();
-        if(merchandiseGroupDto.getId().isEmpty()) {
+        if(categoriesDto.getId().isEmpty()) {
             result.add("Thông tin id bắt buộc");
         }
-        if(merchandiseGroupService.getById(merchandiseGroupDto.getId(), merchandiseGroupDto.getCompanyId()) == null){
-            result.add("Nhóm hàng hoá không tồn tại");
+        if(categoriesService.getById(categoriesDto.getId()) == null){
+            result.add("Danh mục không tồn tại");
         }
-        MerchandiseGroupDto merchandiseGroup = merchandiseGroupService.getByName(merchandiseGroupDto.getName(), merchandiseGroupDto.getCompanyId());
-        if (merchandiseGroup != null && !merchandiseGroup.getId().equals(merchandiseGroupDto.getId())) {
-            result.add("Tên nhóm hàng hóa đã tồn tại");
+        CategoriesDto categoriesDto1 = categoriesService.getByName(categoriesDto.getName());
+        if (categoriesDto1 != null && !categoriesDto1.getId().equals(categoriesDto.getId())) {
+            result.add("Tên danh mục đã tồn tại");
         }
         return result;
     }
@@ -120,13 +115,13 @@ public class CategoriesController extends BaseController {
     private List<String> validateDeleting(String id) {
         List<String> result = new ArrayList<>();
         if(id.isEmpty()) {
-            result.add("Không tồn tại nhóm hàng hóa này");
+            result.add("Không tồn tại danh mục này");
         }
-        if(merchandiseGroupService.getById(id, this.getCompanyId()) == null){
-            result.add("Nhóm hàng hoá không tồn tại");
+        if(categoriesService.getById(id) == null){
+            result.add("Danh mục không tồn tại");
         }
-        if(merchandiseService.checkByGroup1(id, this.getCompanyId())) {
-            result.add("Không thể xoá nhóm hàng hóa này");
+        if(categoriesService.isCategoryUsed(id)) {
+            result.add("Không thể xoá danh mục này");
         }
 
         return result;

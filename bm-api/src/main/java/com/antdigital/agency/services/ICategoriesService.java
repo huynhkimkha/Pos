@@ -14,4 +14,5 @@ public interface ICategoriesService {
     CategoriesDto insert(CategoriesDto categoriesDto);
     CategoriesDto update(CategoriesDto categoriesDto);
     boolean delete(String id);
+    boolean isCategoryUsed(String id);
 }

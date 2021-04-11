@@ -126,10 +126,11 @@ CREATE TABLE IF NOT EXISTS `cost` (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS `categories` (
+CREATE TABLE IF NOT EXISTS `bill_product` (
     `id` varchar(50) NOT NULL,
-    `name` varchar(225) NOT NULL,
-    `created_date` DATETIME,
-    `updated_date` DATETIME,
+    `bill_id` varchar(50),
+    `product_id` varchar(50),
+    `price` float,
+    `quantity` float,
     PRIMARY KEY (id)
 );

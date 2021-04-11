@@ -1,7 +1,9 @@
 package com.antdigital.agency.biz.services.impl;
 
+import com.antdigital.agency.common.utils.UUIDHelper;
 import com.antdigital.agency.dal.entity.Categories;
 import com.antdigital.agency.dal.repository.ICategoriesRepository;
+import com.antdigital.agency.dal.repository.IProductCategoryRepository;
 import com.antdigital.agency.dtos.request.BaseSearchDto;
 import com.antdigital.agency.dtos.response.CategoriesDto;
 import com.antdigital.agency.mappers.ICategoriesDtoMapper;
@@ -23,6 +25,9 @@ public class CategoriesServiceImpl implements ICategoriesService {
 
     @Autowired
     ICategoriesRepository categoriesRepository;
+
+    @Autowired
+    IProductCategoryRepository productCategoryRepository;
 
     @Override
     public List<CategoriesDto> findAll() {
@@ -71,13 +76,13 @@ public class CategoriesServiceImpl implements ICategoriesService {
 
     @Override
     @Transactional
-    public MerchandiseGroupDto insert(MerchandiseGroupDto merchandiseGroupDto) {
+    public CategoriesDto insert(CategoriesDto categoriesDto) {
         try {
-            MerchandiseGroup merchandiseGroup = IMerchandiseGroupDtoMapper.INSTANCE.toMerchandiseGroup(merchandiseGroupDto);
-            merchandiseGroup.setId(UUIDHelper.generateType4UUID().toString());
-            MerchandiseGroup createdMerchandiseGroup = merchandiseGroupRepository.save(merchandiseGroup);
-            merchandiseGroupDto.setId(createdMerchandiseGroup.getId());
-            return merchandiseGroupDto;
+            Categories categories = ICategoriesDtoMapper.INSTANCE.toCategory(categoriesDto);
+            categories.setId(UUIDHelper.generateType4UUID().toString());
+            categories = categoriesRepository.save(categories);
+            categoriesDto.setId(categories.getId());
+            return categoriesDto;
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             logger.error(ex.getStackTrace().toString());
@@ -87,11 +92,11 @@ public class CategoriesServiceImpl implements ICategoriesService {
 
     @Override
     @Transactional
-    public MerchandiseGroupDto update(MerchandiseGroupDto merchandiseGroupDto) {
+    public CategoriesDto update(CategoriesDto categoriesDto) {
         try {
-            MerchandiseGroup merchandiseGroup = IMerchandiseGroupDtoMapper.INSTANCE.toMerchandiseGroup(merchandiseGroupDto);
-            merchandiseGroupRepository.save(merchandiseGroup);
-            return merchandiseGroupDto;
+            Categories categories = ICategoriesDtoMapper.INSTANCE.toCategory(categoriesDto);
+            categoriesRepository.save(categories);
+            return categoriesDto;
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             logger.error(ex.getStackTrace().toString());
@@ -103,12 +108,18 @@ public class CategoriesServiceImpl implements ICategoriesService {
     @Transactional
     public boolean delete(String id) {
         try {
-            merchandiseGroupRepository.deleteById(id);
+            categoriesRepository.deleteById(id);
             return true;
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             logger.error(ex.getStackTrace().toString());
             return false;
         }
+    }
+
+    @Override
+    public boolean isCategoryUsed(String id) {
+        int number = productCategoryRepository.countByCategory(id);
+        return number > 0;
     }
 }

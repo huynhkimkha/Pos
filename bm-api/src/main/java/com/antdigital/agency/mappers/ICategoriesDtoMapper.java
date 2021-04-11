@@ -18,4 +18,6 @@ public interface ICategoriesDtoMapper {
     CategoriesDto toCategoriesDto(Categories categories);
 
     List<CustomersDto> toCustomersDtoList(List<Customers> customersList);
+
+    Categories toCategory(CategoriesDto categoriesDto);
 }
