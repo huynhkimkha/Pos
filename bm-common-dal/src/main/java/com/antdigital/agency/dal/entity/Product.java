@@ -14,8 +14,6 @@ public class Product {
     private String id;
     @Column
     private String name;
-    @Column
-    private Float price;
     @Column(name = "name_slug")
     private String nameSlug;
     @Column(name = "images")

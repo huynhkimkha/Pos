@@ -1,20 +1,15 @@
 package com.antdigital.agency.biz.services.impl;
 
 import com.antdigital.agency.common.utils.UUIDHelper;
-import com.antdigital.agency.dal.entity.Categories;
-import com.antdigital.agency.dal.entity.Employees;
-import com.antdigital.agency.dal.entity.Product;
-import com.antdigital.agency.dal.entity.ProductCategory;
+import com.antdigital.agency.dal.entity.*;
 import com.antdigital.agency.dal.repository.IProductCategoryRepository;
 import com.antdigital.agency.dal.repository.IProductRepository;
+import com.antdigital.agency.dal.repository.IProductSizeRepository;
 import com.antdigital.agency.dtos.request.BaseSearchDto;
-import com.antdigital.agency.dtos.response.EmployeesDto;
-import com.antdigital.agency.dtos.response.ProductCategoryDto;
-import com.antdigital.agency.dtos.response.ProductDto;
-import com.antdigital.agency.dtos.response.ProductFullDto;
-import com.antdigital.agency.mappers.IEmployeesDtoMapper;
+import com.antdigital.agency.dtos.response.*;
 import com.antdigital.agency.mappers.IProductCategoryDtoMapper;
 import com.antdigital.agency.mappers.IProductDtoMapper;
+import com.antdigital.agency.mappers.IProductSizeDtoMapper;
 import com.antdigital.agency.services.IProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +33,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Autowired
     private IProductCategoryRepository productCategoryRepository;
+
+    @Autowired
+    private IProductSizeRepository productSizeRepository;
 
     @Override
     public List<ProductDto> findAll() {
@@ -122,6 +120,18 @@ public class ProductServiceImpl implements IProductService {
 
                 productCategoryRepository.save(tempDetail);
             }
+            for(ProductSizeDto detail : productDto.getProductSizeList()) {
+                if (detail.getSize() == null || detail.getSize().getId() == null
+                        || detail.getSize().getId().isEmpty()) {
+                    continue;
+                }
+
+                ProductSize tempDetail = IProductSizeDtoMapper.INSTANCE.toProductSize(detail);
+                tempDetail.setId(UUIDHelper.generateType4UUID().toString());
+                tempDetail.setProduct(product);
+
+                productSizeRepository.save(tempDetail);
+            }
 
             productDto.setId(product.getId());
             return productDto;
@@ -154,9 +164,27 @@ public class ProductServiceImpl implements IProductService {
                     detailDelete.add(item.getId());
                 }
             }
-
             for(String id : detailDelete) {
                 productCategoryRepository.deleteById(id);
+            }
+
+            // collect detail was removed.
+            List<ProductSize> productSizeList = productSizeRepository.getByProductId(productDto.getId());
+            List<String> productSizeDeleteList = new ArrayList<>();
+
+            for(ProductSize item : productSizeList) {
+                if (item.getId() == null || item.getId().isEmpty()) {
+                    continue;
+                }
+
+                int index = productDto.getProductSizeList().stream().map(t -> t.getId()).collect(Collectors.toList()).indexOf(item.getId());
+                int isExist = productSizeDeleteList.indexOf(item.getId());
+                if (index == -1 && isExist == -1) {
+                    productSizeDeleteList.add(item.getId());
+                }
+            }
+            for(String id : productSizeDeleteList) {
+                productSizeRepository.deleteById(id);
             }
 
             for(ProductCategoryDto productCategoryDto : productDto.getProductCategoryList()) {
@@ -170,6 +198,19 @@ public class ProductServiceImpl implements IProductService {
                 ProductCategory productCategory = IProductCategoryDtoMapper.INSTANCE.toProductCategory(productCategoryDto);
                 productCategory = productCategoryRepository.save(productCategory);
                 productCategoryDto = IProductCategoryDtoMapper.INSTANCE.toProductCategoryDto(productCategory);
+            }
+
+            for(ProductSizeDto productSizeDto : productDto.getProductSizeList()) {
+                if (productSizeDto.getId() == null || productSizeDto.getId().isEmpty()) {
+                    ProductDto productDto1 = new ProductDto();
+                    productDto1.setId(productDto.getId());
+
+                    productSizeDto.setId(UUIDHelper.generateType4UUID().toString());
+                    productSizeDto.setProduct(productDto1);
+                }
+                ProductSize productSize = IProductSizeDtoMapper.INSTANCE.toProductSize(productSizeDto);
+                productSize = productSizeRepository.save(productSize);
+                productSizeDto = IProductSizeDtoMapper.INSTANCE.toProductSizeDto(productSize);
             }
 
             return productDto;
@@ -188,6 +229,9 @@ public class ProductServiceImpl implements IProductService {
             for(ProductCategoryDto detailDto : productFullDto.getProductCategoryList()) {
                 productCategoryRepository.deleteById(detailDto.getId());
             }
+            for(ProductSizeDto detailDto : productFullDto.getProductSizeList()) {
+                productSizeRepository.deleteById(detailDto.getId());
+            }
             productRepository.deleteById(id);
             return true;
         } catch (Exception ex) {
@@ -202,9 +246,12 @@ public class ProductServiceImpl implements IProductService {
         try {
             Product product = productRepository.findById(productId).get();
             List<ProductCategory> details = productCategoryRepository.getByProductId(product.getId());
+            List<ProductSize> productSizeList = productSizeRepository.getByProductId(product.getId());
             ProductFullDto productFullDto = IProductDtoMapper.INSTANCE.toProductFullDto(product);
             List<ProductCategoryDto> detailDto = IProductCategoryDtoMapper.INSTANCE.toProductCategoryDtoList(details);
+            List<ProductSizeDto> productSizeDtoList = IProductSizeDtoMapper.INSTANCE.toProductSizeDtoList(productSizeList);
             productFullDto.setProductCategoryList(detailDto);
+            productFullDto.setProductSizeList(productSizeDtoList);
             return productFullDto;
         } catch (Exception ex) {
             logger.error(ex.getMessage());

@@ -12,7 +12,6 @@ public class ProductDto {
     @NotEmpty(message = "Tên không được trống")
     private String name;
     private String nameSlug;
-    private Float price;
     private String image;
     private ProductStatusEnum status;
     private String content;

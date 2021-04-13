@@ -14,7 +14,6 @@ public class ProductFullDto {
     @NotEmpty(message = "Tên không được trống")
     private String name;
     private String nameSlug;
-    private Float price;
     private String image;
     private ProductStatusEnum status;
     private String content;
@@ -23,4 +22,7 @@ public class ProductFullDto {
     @NotEmpty(message = "Danh mục không được trống")
     @NotNull(message = "Danh mục không được trống")
     private List<ProductCategoryDto> productCategoryList;
+    @NotEmpty(message = "Kích cỡ không được trống")
+    @NotNull(message = "Kích cỡ không được trống")
+    private List<ProductSizeDto> productSizeList;
 }

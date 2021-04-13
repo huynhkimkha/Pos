@@ -1,6 +1,5 @@
 package com.antdigital.agency.dal.repository;
 
-import com.antdigital.agency.dal.entity.Categories;
 import com.antdigital.agency.dal.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

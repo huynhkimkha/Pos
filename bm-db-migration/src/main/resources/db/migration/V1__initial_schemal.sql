@@ -32,7 +32,6 @@ INSERT INTO customers(id, full_name, address, phone, birth_date) VALUES
 CREATE TABLE IF NOT EXISTS `products` (
     `id` varchar(50) NOT NULL,
     `name` varchar(225),
-    `price` float,
     `name_slug` varchar(225),
     `images` varchar(225),
     `content` varchar(225),
@@ -50,6 +49,11 @@ CREATE TABLE IF NOT EXISTS `categories` (
     `updated_date` DATETIME,
     PRIMARY KEY (id)
 );
+INSERT INTO categories(id, `name`, status) VALUES
+('6d717691-9af5-43a5-be9c-eef336db6990', 'Sinh Tố', 'ACTIVE'),
+('8a8ffbb9-bce7-411d-a5ae-d6af899d1f3b', 'Cà phê', 'ACTIVE'),
+('cc72f914-2e06-4a6f-9a66-06b62c7cc020', 'Sữa chua', 'ACTIVE'),
+('cedb935f-fcc8-4888-b8f7-e056673d3661', 'Trà', 'ACTIVE');
 
 CREATE TABLE IF NOT EXISTS `product_category` (
     `id` varchar(50) NOT NULL,
@@ -129,8 +133,26 @@ CREATE TABLE IF NOT EXISTS `cost` (
 CREATE TABLE IF NOT EXISTS `bill_product` (
     `id` varchar(50) NOT NULL,
     `bill_id` varchar(50),
-    `product_id` varchar(50),
+    `product_size_id` varchar(50),
     `price` float,
     `quantity` float,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS `sizes` (
+    `id` varchar(50) NOT NULL,
+    `name` varchar(50),
+    PRIMARY KEY (id)
+);
+INSERT INTO sizes(id, `name`) VALUES
+('a1717691-9af5-43a5-be9c-eef336db6990', 'S'),
+('a28ffbb9-bce7-411d-a5ae-d6af899d1f3b', 'M'),
+('a372f914-2e06-4a6f-9a66-06b62c7cc020', 'L');
+
+CREATE TABLE IF NOT EXISTS `product_size` (
+    `id` varchar(50) NOT NULL,
+    `product_id` varchar(50),
+    `size_id` varchar(50),
+    `price` float,
     PRIMARY KEY (id)
 );
