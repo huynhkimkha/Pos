@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS `promotion` (
     `name` varchar(225),
     `description` varchar(225),
     `amount` float,
+    `type_promotion` varchar(50),
     `status` varchar(50),
     `expired_date` DATETIME,
     `created_date` DATETIME,
