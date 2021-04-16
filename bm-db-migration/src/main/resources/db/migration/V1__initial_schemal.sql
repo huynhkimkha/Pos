@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `cost` (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS `bill_product` (
+CREATE TABLE IF NOT EXISTS `bill_product_size` (
     `id` varchar(50) NOT NULL,
     `bill_id` varchar(50),
     `product_size_id` varchar(50),
