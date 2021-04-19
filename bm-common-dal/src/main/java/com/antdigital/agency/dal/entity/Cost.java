@@ -1,6 +1,5 @@
 package com.antdigital.agency.dal.entity;
 
-import com.antdigital.agency.common.enums.TypeCostEnum;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,9 +14,13 @@ public class Cost {
     @ManyToOne
     @JoinColumn(name = "agency_id")
     private Agency agency;
-    @Enumerated(EnumType.STRING)
-    @Column(name="type_cost")
-    private TypeCostEnum typeCost;
+    @ManyToOne
+    @JoinColumn(name = "cost_category_id")
+    private CostCategory costCategory;
+    @Column
+    private String code;
+    @Column
+    private String number;
     @Column
     private String amount;
     @Column

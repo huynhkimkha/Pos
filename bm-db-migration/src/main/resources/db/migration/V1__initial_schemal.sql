@@ -18,6 +18,7 @@ VALUES('f7887a85-1e83-55f1-86d0-b3574b7fe3eb', 'bfbd7f9d-f880-4076-a342-eeceba11
 
 CREATE TABLE IF NOT EXISTS `customers` (
     `id` varchar(50) NOT NULL,
+    `customer_type` varchar(225),
     `full_name` varchar(225),
     `address` varchar(225),
     `phone` varchar(50),
@@ -26,8 +27,9 @@ CREATE TABLE IF NOT EXISTS `customers` (
     `updated_date` DATETIME,
     PRIMARY KEY (id)
 );
-INSERT INTO customers(id, full_name, address, phone, birth_date) VALUES
-('1dfd5e63-f1dd-445d-b83e-94070a01ec20', 'Huỳnh Kim Kha', '480 Mã Lò', '0378411656', '1999-11-11');
+INSERT INTO customers(id, customer_type, full_name, address, phone, birth_date) VALUES
+('1dfd5e63-f1dd-445d-b83e-94070a01ec20', 'CUSTOMER', 'Huỳnh Kim Kha', '480 Mã Lò', '0378411656', '1999-11-11'),
+('323d5e63-f1dd-445d-b83e-94070a01ec12', 'VENDOR', 'Huỳnh Ngọc Thanh Phong', '353 Nguyễn Trãi', '0123456789', '1999-11-11');
 
 CREATE TABLE IF NOT EXISTS `products` (
     `id` varchar(50) NOT NULL,
@@ -119,17 +121,33 @@ CREATE TABLE IF NOT EXISTS `agency` (
 INSERT INTO agency(id, `name`, address, org_code) VALUES
 ('bfbd7f9d-f880-4076-a342-eeceba11dcfa', 'HQSV_DHSG', '273 An Dương Vương, Quận 5, TPHCM', '');
 
-
 CREATE TABLE IF NOT EXISTS `cost` (
     `id` varchar(50) NOT NULL,
     `agency_id` varchar(50),
-    `type_cost` varchar(225),
+    `cost_category_id` varchar(225),
+    `code` varchar(50),
+    `number` varchar(50),
     `amount` float,
     `description` varchar(225),
     `created_date` DATETIME,
     `updated_date` DATETIME,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS `cost_category` (
+    `id` varchar(50) NOT NULL,
+    `name` varchar(225),
+    PRIMARY KEY (id)
+);
+
+INSERT INTO cost_category(id, name) VALUES
+('12317691-9af5-43a5-be9c-eef336db6111', 'TRẢ LƯƠNG'),
+('234ffbb9-bce7-411d-a5ae-d6af899d1222', 'MẶT BẰNG'),
+('3452f914-2e06-4a6f-9a66-06b62c7cc333', 'NHẬP HÀNG'),
+('5672f914-2e06-4a6f-9a66-06b62c7cc555', 'NƯỚC'),
+('6782f914-2e06-4a6f-9a66-06b62c7cc666', 'KHÁC'),
+('456b935f-fcc8-4888-b8f7-e056673d3444', 'ĐIỆN');
+
 
 CREATE TABLE IF NOT EXISTS `bill_product_size` (
     `id` varchar(50) NOT NULL,
@@ -157,3 +175,45 @@ CREATE TABLE IF NOT EXISTS `product_size` (
     `price` float,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS `materials` (
+    `id` varchar(50) NOT NULL,
+    `name` varchar(50),
+    `unit` varchar(50),
+    `price` float,
+    `content` varchar(225),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS `inventory` (
+    `id` varchar(50) NOT NULL,
+    `agency_id` varchar(50),
+    `material_id` varchar(50),
+    `amount` float,
+    `amount_check` float,
+    `description` varchar(225),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS `import` (
+    `id` varchar(50) NOT NULL,
+    `agency_id` varchar(50),
+    `customer_id` varchar(50),
+    `code` varchar(50),
+    `number` varchar(50),
+    `description` varchar(225),
+    `note` varchar(225),
+    `amount` float,
+    `created_date` DATETIME,
+    `updated_date` DATETIME,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS `import` (
+    `id` varchar(50) NOT NULL,
+    `import_id` varchar(50),
+    `material_id` varchar(50),
+    `quantity` float,
+    `price` varchar(50)
+);
+

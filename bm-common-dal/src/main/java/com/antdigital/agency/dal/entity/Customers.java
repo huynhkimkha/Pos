@@ -1,5 +1,6 @@
 package com.antdigital.agency.dal.entity;
 
+import com.antdigital.agency.common.enums.CustomerTypeEnum;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -11,6 +12,9 @@ import java.util.Date;
 public class Customers {
     @Id
     private String id;
+    @Enumerated(EnumType.STRING)
+    @Column(name="customer_type")
+    private CustomerTypeEnum customerType;
     @Column(name="full_name")
     private String fullName;
     @Column
