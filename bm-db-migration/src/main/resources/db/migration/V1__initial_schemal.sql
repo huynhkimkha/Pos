@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `import` (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS `import` (
+CREATE TABLE IF NOT EXISTS `importing_transaction` (
     `id` varchar(50) NOT NULL,
     `import_id` varchar(50),
     `material_id` varchar(50),
