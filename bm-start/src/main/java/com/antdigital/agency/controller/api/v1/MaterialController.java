@@ -32,10 +32,16 @@ public class MaterialController {
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nguyên liệu"), HttpStatus.OK.value(), search));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> findOne(@PathVariable String id) {
+    @GetMapping("/findOne")
+    public ResponseEntity<?> findOne(@RequestParam String id) {
         MaterialDto materialDto = materialService.getById(id);
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nguyên liệu"), HttpStatus.OK.value(), materialDto));
+    }
+
+    @GetMapping("/like-name")
+    public ResponseEntity<?> getLikeName(@RequestParam String name) {
+        List<MaterialDto> materialDtoList = materialService.getLikeName(name);
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nguyên liệu"), HttpStatus.OK.value(), materialDtoList));
     }
 
     @PostMapping("/insert")

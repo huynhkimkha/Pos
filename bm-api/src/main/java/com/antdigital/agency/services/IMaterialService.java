@@ -11,5 +11,6 @@ public interface IMaterialService {
     MaterialDto getById(String id);
     MaterialDto insert(MaterialDto materialDto);
     MaterialDto update(MaterialDto materialDto);
+    List<MaterialDto> getLikeName(String name);
     boolean delete(String id);
 }

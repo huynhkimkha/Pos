@@ -100,4 +100,10 @@ public class MaterialServiceImpl implements IMaterialService {
             return false;
         }
     }
+
+    @Override
+    public List<MaterialDto> getLikeName(String name) {
+        List<Material> productList = materialRepository.getLikeName(name);
+        return IMaterialDtoMapper.INSTANCE.toMaterialDtoList(productList);
+    }
 }

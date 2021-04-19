@@ -192,6 +192,8 @@ CREATE TABLE IF NOT EXISTS `inventory` (
     `amount` float,
     `amount_check` float,
     `description` varchar(225),
+    `created_date` DATETIME,
+    `updated_date` DATETIME,
     PRIMARY KEY (id)
 );
 
@@ -214,6 +216,7 @@ CREATE TABLE IF NOT EXISTS `importing_transaction` (
     `import_id` varchar(50),
     `material_id` varchar(50),
     `quantity` float,
-    `price` varchar(50)
+    `price` varchar(50),
+    PRIMARY KEY (id)
 );
 

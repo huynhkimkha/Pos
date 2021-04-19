@@ -2,7 +2,9 @@ package com.antdigital.agency.biz.services.impl;
 
 import com.antdigital.agency.common.utils.UUIDHelper;
 import com.antdigital.agency.dal.entity.Inventory;
+import com.antdigital.agency.dal.entity.Material;
 import com.antdigital.agency.dal.repository.IInventoryRepository;
+import com.antdigital.agency.dal.repository.IMaterialRepository;
 import com.antdigital.agency.dtos.request.BaseSearchDto;
 import com.antdigital.agency.dtos.response.InventoryDto;
 import com.antdigital.agency.mappers.IInventoryDtoMapper;
@@ -25,6 +27,9 @@ public class InventoryServiceImpl implements IInventoryService {
 
     @Autowired
     IInventoryRepository inventoryRepository;
+
+    @Autowired
+    IMaterialRepository materialRepository;
 
     @Override
     public List<InventoryDto> findAll(String agencyId) {

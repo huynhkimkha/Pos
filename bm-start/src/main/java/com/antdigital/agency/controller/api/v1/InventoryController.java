@@ -34,8 +34,8 @@ public class InventoryController extends BaseController {
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Tồn kho"), HttpStatus.OK.value(), search));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> findOne(@PathVariable String id) {
+    @GetMapping("/findOne")
+    public ResponseEntity<?> findOne(@RequestParam String id) {
         InventoryDto inventoryDto = inventoryService.getById(id);
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Tồn kho"), HttpStatus.OK.value(), inventoryDto));
     }
