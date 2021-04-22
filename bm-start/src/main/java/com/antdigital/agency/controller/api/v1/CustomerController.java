@@ -2,6 +2,7 @@ package com.antdigital.agency.controller.api.v1;
 
 import com.antdigital.agency.dtos.request.BaseSearchDto;
 import com.antdigital.agency.dtos.response.CustomersDto;
+import com.antdigital.agency.dtos.response.MaterialDto;
 import com.antdigital.agency.dtos.response.ResponseDto;
 import com.antdigital.agency.services.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,12 @@ public class CustomerController extends BaseController {
     public ResponseEntity<?> findOne(@RequestParam String id) {
         CustomersDto customerDto = customerService.getCustomerById(id);
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Khách hàng"), HttpStatus.OK.value(), customerDto));
+    }
+
+    @GetMapping("/like-name")
+    public ResponseEntity<?> getLikeName(@RequestParam String name) {
+        List<CustomersDto> customerDto = customerService.getLikeName(name);
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Nguyên liệu"), HttpStatus.OK.value(), customerDto));
     }
 
     @PostMapping("/insert")

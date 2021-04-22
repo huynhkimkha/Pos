@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `inventory` (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS `import` (
+CREATE TABLE IF NOT EXISTS `importing_material` (
     `id` varchar(50) NOT NULL,
     `agency_id` varchar(50),
     `customer_id` varchar(50),
@@ -213,10 +213,11 @@ CREATE TABLE IF NOT EXISTS `import` (
 
 CREATE TABLE IF NOT EXISTS `importing_transaction` (
     `id` varchar(50) NOT NULL,
-    `import_id` varchar(50),
+    `importing_material_id` varchar(50),
     `material_id` varchar(50),
     `quantity` float,
-    `price` varchar(50),
+    `price` float,
+    `amount` float,
     PRIMARY KEY (id)
 );
 

@@ -2,6 +2,7 @@ package com.antdigital.agency.services;
 
 import com.antdigital.agency.dtos.request.BaseSearchDto;
 import com.antdigital.agency.dtos.response.CustomersDto;
+import com.antdigital.agency.dtos.response.MaterialDto;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ public interface ICustomerService {
     CustomersDto update(CustomersDto customersDto);
     CustomersDto insert(CustomersDto customersDto);
     boolean deleteCustomer(String id);
+    List<CustomersDto> getLikeName(String name);
 }

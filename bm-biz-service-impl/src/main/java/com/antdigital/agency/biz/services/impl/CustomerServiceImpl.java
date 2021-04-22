@@ -2,10 +2,13 @@ package com.antdigital.agency.biz.services.impl;
 
 import com.antdigital.agency.common.utils.UUIDHelper;
 import com.antdigital.agency.dal.entity.Customers;
+import com.antdigital.agency.dal.entity.Material;
 import com.antdigital.agency.dal.repository.ICustomersRepository;
 import com.antdigital.agency.dtos.request.BaseSearchDto;
 import com.antdigital.agency.dtos.response.CustomersDto;
+import com.antdigital.agency.dtos.response.MaterialDto;
 import com.antdigital.agency.mappers.ICustomersDtoMapper;
+import com.antdigital.agency.mappers.IMaterialDtoMapper;
 import com.antdigital.agency.services.ICustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,5 +105,11 @@ public class CustomerServiceImpl implements ICustomerService {
             logger.error(ex.getStackTrace().toString());
             return false;
         }
+    }
+
+    @Override
+    public List<CustomersDto> getLikeName(String name) {
+        List<Customers> customersList = customersRepository.getLikeName(name);
+        return ICustomersDtoMapper.INSTANCE.toCustomersDtoList(customersList);
     }
 }

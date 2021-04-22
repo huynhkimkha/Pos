@@ -9,7 +9,7 @@ public interface IInventoryService {
     List<InventoryDto> findAll(String agencyId);
     BaseSearchDto<List<InventoryDto>> findAll(BaseSearchDto<List<InventoryDto>> searchDto, String agencyId);
     InventoryDto getById(String id);
-    InventoryDto insert(InventoryDto materialDto);
-    InventoryDto update(InventoryDto materialDto);
+    InventoryDto insert(InventoryDto inventoryDto);
+    InventoryDto update(InventoryDto inventoryDto);
     boolean delete(String id);
 }
