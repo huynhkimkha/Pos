@@ -1,8 +1,11 @@
 package com.antdigital.agency.biz.services.impl;
 
+import com.antdigital.agency.common.utils.StringHelper;
 import com.antdigital.agency.common.utils.UUIDHelper;
+import com.antdigital.agency.dal.entity.Cost;
 import com.antdigital.agency.dal.entity.ImportingMaterial;
 import com.antdigital.agency.dal.entity.ImportingTransaction;
+import com.antdigital.agency.dal.repository.ICostRepository;
 import com.antdigital.agency.dal.repository.IImportingMaterialRepository;
 import com.antdigital.agency.dal.repository.IImportingTransactionRepository;
 import com.antdigital.agency.dtos.request.BaseSearchDto;
@@ -19,7 +22,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +37,9 @@ public class ImportingMaterialServiceImpl implements IImportingMaterialService {
 
     @Autowired
     private IImportingTransactionRepository importingTransactionRepository;
+
+    @Autowired
+    private ICostRepository costRepository;
 
     @Override
     public List<ImportingMaterialDto> findAll(String agencyId) {
@@ -162,6 +170,27 @@ public class ImportingMaterialServiceImpl implements IImportingMaterialService {
             logger.error(ex.getMessage());
             logger.error(ex.getStackTrace().toString());
             return false;
+        }
+    }
+
+    @Override
+    public String getNumber(String createdDate, String agencyId) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            ImportingMaterial result = importingMaterialRepository.getImportingMaterialNumber(sdf.parse(createdDate), agencyId);
+            if (result == null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(sdf.parse(createdDate));
+                int month = cal.get(Calendar.MONTH) + 1;
+                String monthStr = month > 9 ? String.valueOf(month) : "0" + month;
+                return monthStr + "/0001";
+            }
+            String number = result.getNumber();
+            return StringHelper.NumberOfCertificate(number);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            logger.error(ex.getStackTrace().toString());
+            return null;
         }
     }
 }

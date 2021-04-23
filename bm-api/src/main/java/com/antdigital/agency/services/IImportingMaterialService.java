@@ -3,7 +3,6 @@ package com.antdigital.agency.services;
 import com.antdigital.agency.dtos.request.BaseSearchDto;
 import com.antdigital.agency.dtos.response.ImportingMaterialDto;
 import com.antdigital.agency.dtos.response.ImportingMaterialFullDto;
-import com.antdigital.agency.dtos.response.InventoryDto;
 
 import java.util.List;
 
@@ -14,4 +13,5 @@ public interface IImportingMaterialService {
     ImportingMaterialFullDto insert(ImportingMaterialFullDto importingMaterialFullDto);
     ImportingMaterialFullDto update(ImportingMaterialFullDto importingMaterialFullDto);
     boolean delete(String id);
+    String getNumber(String createdDate, String agencyId);
 }

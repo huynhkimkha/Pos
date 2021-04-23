@@ -39,6 +39,13 @@ public class CostController extends BaseController{
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Chi phí"), HttpStatus.OK.value(), cost));
     }
 
+    @GetMapping("/get-number/{createdDate}")
+    public ResponseEntity<?> getNumber(@PathVariable String createdDate) {
+        String number = costService.getNumber(createdDate, getAgencyId());
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Phiếu nhập"), HttpStatus.OK.value(), number));
+    }
+
+
     @PostMapping("/insert")
     public ResponseEntity<?> insert(@Valid @RequestBody CostDto costDto) {
         if(costDto.getAgency() == null || costDto.getAgency().getId() == null || costDto.getAgency().getId().isEmpty()){

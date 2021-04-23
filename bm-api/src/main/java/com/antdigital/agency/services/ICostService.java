@@ -12,4 +12,5 @@ public interface ICostService {
     CostDto update(CostDto customersDto);
     CostDto insert(CostDto customersDto);
     boolean deleteCost(String id);
+    String getNumber(String createdDate, String agencyId);
 }

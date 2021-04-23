@@ -32,9 +32,15 @@ public class ImportingMaterialController extends BaseController{
     }
 
     @GetMapping("/get-full/{id}")
-    public ResponseEntity<?> getProductFull(@PathVariable String id) {
+    public ResponseEntity<?> getImportingMaterialFull(@PathVariable String id) {
         ImportingMaterialFullDto importingMaterialDto = importingMaterialService.getFullById(id);
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Phiếu nhập"), HttpStatus.OK.value(), importingMaterialDto));
+    }
+
+    @GetMapping("/get-number/{createdDate}")
+    public ResponseEntity<?> getNumber(@PathVariable String createdDate) {
+        String number = importingMaterialService.getNumber(createdDate, getAgencyId());
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Phiếu nhập"), HttpStatus.OK.value(), number));
     }
 
     @PostMapping("/insert")
