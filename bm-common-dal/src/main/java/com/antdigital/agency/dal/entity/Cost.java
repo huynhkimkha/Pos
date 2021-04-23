@@ -22,7 +22,7 @@ public class Cost {
     @Column
     private String number;
     @Column
-    private String amount;
+    private Float amount;
     @Column
     private String description;
     @Column(name = "created_date")
