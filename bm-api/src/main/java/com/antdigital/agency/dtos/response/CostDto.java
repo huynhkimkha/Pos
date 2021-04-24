@@ -11,7 +11,7 @@ public class CostDto {
     private CostCategoryDto costCategory;
     private String code;
     private String number;
-    private float amount;
+    private Float amount;
     private String description;
     private Date createdDate;
     private Date updatedDate;
