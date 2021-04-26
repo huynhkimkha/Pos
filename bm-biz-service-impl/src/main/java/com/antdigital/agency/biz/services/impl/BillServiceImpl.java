@@ -2,6 +2,8 @@ package com.antdigital.agency.biz.services.impl;
 
 import com.antdigital.agency.common.utils.StringHelper;
 import com.antdigital.agency.common.utils.UUIDHelper;
+import com.antdigital.agency.dal.dao.IBillDao;
+import com.antdigital.agency.dal.data.*;
 import com.antdigital.agency.dal.entity.*;
 import com.antdigital.agency.dal.repository.IBillProductSizeRepository;
 import com.antdigital.agency.dal.repository.IBillRepository;
@@ -21,6 +23,7 @@ import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +36,9 @@ public class BillServiceImpl implements IBillService {
 
     @Autowired
     private IBillProductSizeRepository billProductSizeRepository;
+
+    @Autowired
+    private IBillDao billDao;
 
     @Override
     public List<BillDto> findAll(String agencyId) {
@@ -191,6 +197,127 @@ public class BillServiceImpl implements IBillService {
             logger.error(ex.getStackTrace().toString());
             return null;
         }
+    }
+
+    @Override
+    public List<MonthBillDetailDto> getMonthBill(RangeDateDto rangeDateDto, String agencyId) {
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String fromDateNew = format1.format(rangeDateDto.getFromDate());
+        String toDateNew = format1.format(rangeDateDto.getToDate());
+        List<MonthBillDetail> monthBillDetails = billDao.getMonthBill(fromDateNew, toDateNew, agencyId);
+        Calendar fromCal = Calendar.getInstance();
+        Calendar toCal = Calendar.getInstance();
+
+        fromCal.setTime(new Date(rangeDateDto.getFromDate()));
+        toCal.setTime(new Date(rangeDateDto.getToDate()));
+
+        Integer fromMonth = fromCal.get(Calendar.MONTH) + 1;
+        Integer toMonth =  toCal.get(Calendar.MONTH) + 1;
+        Integer fromYear = fromCal.get(Calendar.YEAR);
+        Integer toYear =  toCal.get(Calendar.YEAR);
+
+        if (fromYear < toYear) {
+            toMonth = 12;
+        }
+        List<MonthBillDetail> monthBillDetailList = new ArrayList<>();
+        while(fromYear <= toYear){
+            if (fromYear - toYear == 0){
+                toMonth =  toCal.get(Calendar.MONTH) + 1;
+            }
+            while(fromMonth <= toMonth){
+                MonthBillDetail monthBillDetail = new MonthBillDetail();
+                monthBillDetail.setMonthDate(fromMonth);
+                monthBillDetail.setYearDate(fromYear);
+                monthBillDetail.setTotal(0);
+                monthBillDetailList.add(monthBillDetail);
+                fromMonth += 1;
+            }
+            fromMonth = 1;
+            fromYear += 1;
+        }
+        for(MonthBillDetail monthBillDetail: monthBillDetails){
+            List<MonthBillDetail> detailLst = monthBillDetailList.stream().filter(item -> item.getMonthDate() == monthBillDetail.getMonthDate()).collect(Collectors.toList());
+            for (MonthBillDetail temp : detailLst) {
+                temp.setTotal(monthBillDetail.getTotal());
+            }
+        }
+        List<MonthBillDetailDto> monthBillDetailDtos = IMonthBillDetailDtoMapper.INSTANCE.toMonthBillDtoList(monthBillDetailList);
+
+        return monthBillDetailDtos;
+    }
+
+    @Override
+    public List<DateBillDetailDto> getDateBill(RangeDateDto rangeDateDto, String agencyId) {
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String fromDateNew = format1.format(rangeDateDto.getFromDate());
+        String toDateNew = format1.format(rangeDateDto.getToDate());
+        List<DateBillDetail> dateBillDetails = billDao.getDateBill(fromDateNew, toDateNew, agencyId);
+        Calendar fromCal = Calendar.getInstance();
+        Calendar toCal = Calendar.getInstance();
+
+        fromCal.setTime(new Date(rangeDateDto.getFromDate()));
+        toCal.setTime(new Date(rangeDateDto.getToDate()));
+
+        Integer fromDate = fromCal.get(Calendar.DAY_OF_MONTH);
+        Integer toDate =  toCal.get(Calendar.DAY_OF_MONTH);
+        Integer month = fromCal.get(Calendar.MONTH) + 1;
+        Integer year = fromCal.get(Calendar.YEAR);
+
+        List<DateBillDetail> dateBillDetailList = new ArrayList<>();
+        while(fromDate <= toDate){
+            DateBillDetail dateBillDetail = new DateBillDetail();
+            dateBillDetail.setDate(fromDate);
+            dateBillDetail.setMonth(month);
+            dateBillDetail.setYear(year);
+            dateBillDetail.setTotal(0);
+            dateBillDetailList.add(dateBillDetail);
+            fromDate += 1;
+        }
+
+        for(DateBillDetail dateBillDetail: dateBillDetails){
+            List<DateBillDetail> detailLst = dateBillDetailList.stream().filter(item -> item.getDate() == dateBillDetail.getDate()).collect(Collectors.toList());
+            for (DateBillDetail temp : detailLst) {
+                temp.setTotal(dateBillDetail.getTotal());
+            }
+        }
+        List<DateBillDetailDto> dateBillDetailDtos = IDateBillDetailDtoMapper.INSTANCE.toDateBillDtoList(dateBillDetailList);
+
+        return dateBillDetailDtos;
+    }
+
+    @Override
+    public List<YearBillDetailDto> getYearBill(RangeDateDto rangeDateDto, String agencyId) {
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String fromDateNew = format1.format(rangeDateDto.getFromDate());
+        String toDateNew = format1.format(rangeDateDto.getToDate());
+        List<YearBillDetail> yearBillDetails = billDao.getYearBill(fromDateNew, toDateNew, agencyId);
+        Calendar fromCal = Calendar.getInstance();
+        Calendar toCal = Calendar.getInstance();
+
+        fromCal.setTime(new Date(rangeDateDto.getFromDate()));
+        toCal.setTime(new Date(rangeDateDto.getToDate()));
+
+        Integer fromYear = fromCal.get(Calendar.YEAR);
+        Integer toYear = toCal.get(Calendar.YEAR);
+
+        List<YearBillDetail> yearBillDetailList = new ArrayList<>();
+        while(fromYear <= toYear){
+            YearBillDetail yearBillDetail = new YearBillDetail();
+            yearBillDetail.setYear(fromYear);
+            yearBillDetail.setTotal(0);
+            yearBillDetailList.add(yearBillDetail);
+            fromYear += 1;
+        }
+
+        for(YearBillDetail yearBillDetail: yearBillDetails) {
+            List<YearBillDetail> detailLst = yearBillDetailList.stream().filter(item -> item.getYear() == yearBillDetail.getYear()).collect(Collectors.toList());
+            for (YearBillDetail temp : detailLst) {
+                temp.setTotal(yearBillDetail.getTotal());
+            }
+        }
+        List<YearBillDetailDto> yearBillDetailDtos = IYearBillDetailDtoMapper.INSTANCE.toYearBillDtoList(yearBillDetailList);
+
+        return yearBillDetailDtos;
     }
 
 }

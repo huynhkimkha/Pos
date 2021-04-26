@@ -1,8 +1,7 @@
 package com.antdigital.agency.services;
 
 import com.antdigital.agency.dtos.request.BaseSearchDto;
-import com.antdigital.agency.dtos.response.BillFullDto;
-import com.antdigital.agency.dtos.response.BillDto;
+import com.antdigital.agency.dtos.response.*;
 
 import java.util.List;
 
@@ -14,4 +13,7 @@ public interface IBillService {
     BillFullDto update(BillFullDto billFullDto);
     boolean delete(String id);
     String getNumber(String createdDate, String agencyId);
+    List<MonthBillDetailDto> getMonthBill(RangeDateDto rangeDateDto, String agencyId);
+    List<DateBillDetailDto> getDateBill(RangeDateDto rangeDateDto, String agencyId);
+    List<YearBillDetailDto> getYearBill(RangeDateDto rangeDateDto, String agencyId);
 }

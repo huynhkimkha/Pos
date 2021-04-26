@@ -2,12 +2,19 @@ package com.antdigital.agency.biz.services.impl;
 
 import com.antdigital.agency.common.utils.StringHelper;
 import com.antdigital.agency.common.utils.UUIDHelper;
+import com.antdigital.agency.dal.dao.ICostDao;
+import com.antdigital.agency.dal.data.DateCostDetail;
+import com.antdigital.agency.dal.data.MonthCostDetail;
+import com.antdigital.agency.dal.data.YearCostDetail;
 import com.antdigital.agency.dal.entity.Cost;
 import com.antdigital.agency.dal.entity.ImportingMaterial;
 import com.antdigital.agency.dal.repository.ICostRepository;
 import com.antdigital.agency.dtos.request.BaseSearchDto;
-import com.antdigital.agency.dtos.response.CostDto;
+import com.antdigital.agency.dtos.response.*;
 import com.antdigital.agency.mappers.ICostDtoMapper;
+import com.antdigital.agency.mappers.IDateCostDetailDtoMapper;
+import com.antdigital.agency.mappers.IMonthCostDetailDtoMapper;
+import com.antdigital.agency.mappers.IYearCostDetailDtoMapper;
 import com.antdigital.agency.services.ICostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +26,11 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CostServiceImpl implements ICostService {
@@ -28,6 +38,9 @@ public class CostServiceImpl implements ICostService {
 
     @Autowired
     private ICostRepository costRepository;
+
+    @Autowired
+    private ICostDao costDao;
 
     @Override
     public List<CostDto> findAll(String agencyId) {
@@ -121,4 +134,126 @@ public class CostServiceImpl implements ICostService {
             return null;
         }
     }
+
+    @Override
+    public List<MonthCostDetailDto> getMonthCost(RangeDateDto rangeDateDto, String agencyId) {
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String fromDateNew = format1.format(rangeDateDto.getFromDate());
+        String toDateNew = format1.format(rangeDateDto.getToDate());
+        List<MonthCostDetail> monthCostDetails = costDao.getMonthCost(fromDateNew, toDateNew, agencyId);
+        Calendar fromCal = Calendar.getInstance();
+        Calendar toCal = Calendar.getInstance();
+
+        fromCal.setTime(new Date(rangeDateDto.getFromDate()));
+        toCal.setTime(new Date(rangeDateDto.getToDate()));
+
+        Integer fromMonth = fromCal.get(Calendar.MONTH) + 1;
+        Integer toMonth =  toCal.get(Calendar.MONTH) + 1;
+        Integer fromYear = fromCal.get(Calendar.YEAR);
+        Integer toYear =  toCal.get(Calendar.YEAR);
+
+        if (fromYear < toYear) {
+            toMonth = 12;
+        }
+        List<MonthCostDetail> monthCostDetailList = new ArrayList<>();
+        while(fromYear <= toYear){
+            if (fromYear - toYear == 0){
+                toMonth =  toCal.get(Calendar.MONTH) + 1;
+            }
+            while(fromMonth <= toMonth){
+                MonthCostDetail monthCostDetail = new MonthCostDetail();
+                monthCostDetail.setMonthDate(fromMonth);
+                monthCostDetail.setYearDate(fromYear);
+                monthCostDetail.setTotal(0);
+                monthCostDetailList.add(monthCostDetail);
+                fromMonth += 1;
+            }
+            fromMonth = 1;
+            fromYear += 1;
+        }
+        for(MonthCostDetail monthCostDetail: monthCostDetails){
+            List<MonthCostDetail> detailLst = monthCostDetailList.stream().filter(item -> item.getMonthDate() == monthCostDetail.getMonthDate()).collect(Collectors.toList());
+            for (MonthCostDetail temp : detailLst) {
+                temp.setTotal(monthCostDetail.getTotal());
+            }
+        }
+        List<MonthCostDetailDto> monthCostDetailDtos = IMonthCostDetailDtoMapper.INSTANCE.toMonthCostDtoList(monthCostDetailList);
+
+        return monthCostDetailDtos;
+    }
+
+    @Override
+    public List<DateCostDetailDto> getDateCost(RangeDateDto rangeDateDto, String agencyId) {
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String fromDateNew = format1.format(rangeDateDto.getFromDate());
+        String toDateNew = format1.format(rangeDateDto.getToDate());
+        List<DateCostDetail> dateCostDetails = costDao.getDateCost(fromDateNew, toDateNew, agencyId);
+        Calendar fromCal = Calendar.getInstance();
+        Calendar toCal = Calendar.getInstance();
+
+        fromCal.setTime(new Date(rangeDateDto.getFromDate()));
+        toCal.setTime(new Date(rangeDateDto.getToDate()));
+
+        Integer fromDate = fromCal.get(Calendar.DAY_OF_MONTH);
+        Integer toDate =  toCal.get(Calendar.DAY_OF_MONTH);
+        Integer month = fromCal.get(Calendar.MONTH) + 1;
+        Integer year = fromCal.get(Calendar.YEAR);
+
+        List<DateCostDetail> dateCostDetailList = new ArrayList<>();
+        while(fromDate <= toDate){
+            DateCostDetail dateCostDetail = new DateCostDetail();
+            dateCostDetail.setDate(fromDate);
+            dateCostDetail.setMonth(month);
+            dateCostDetail.setYear(year);
+            dateCostDetail.setTotal(0);
+            dateCostDetailList.add(dateCostDetail);
+            fromDate += 1;
+        }
+
+        for(DateCostDetail dateCostDetail: dateCostDetails){
+            List<DateCostDetail> detailLst = dateCostDetailList.stream().filter(item -> item.getDate() == dateCostDetail.getDate()).collect(Collectors.toList());
+            for (DateCostDetail temp : detailLst) {
+                temp.setTotal(dateCostDetail.getTotal());
+            }
+        }
+        List<DateCostDetailDto> dateCostDetailDtos = IDateCostDetailDtoMapper.INSTANCE.toDateCostDtoList(dateCostDetailList);
+
+        return dateCostDetailDtos;
+    }
+
+    @Override
+    public List<YearCostDetailDto> getYearCost(RangeDateDto rangeDateDto, String agencyId) {
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String fromDateNew = format1.format(rangeDateDto.getFromDate());
+        String toDateNew = format1.format(rangeDateDto.getToDate());
+        List<YearCostDetail> yearCostDetails = costDao.getYearCost(fromDateNew, toDateNew, agencyId);
+        Calendar fromCal = Calendar.getInstance();
+        Calendar toCal = Calendar.getInstance();
+
+        fromCal.setTime(new Date(rangeDateDto.getFromDate()));
+        toCal.setTime(new Date(rangeDateDto.getToDate()));
+
+        Integer fromYear = fromCal.get(Calendar.YEAR);
+        Integer toYear = toCal.get(Calendar.YEAR);
+
+        List<YearCostDetail> yearCostDetailList = new ArrayList<>();
+        while(fromYear <= toYear){
+            YearCostDetail yearCostDetail = new YearCostDetail();
+            yearCostDetail.setYear(fromYear);
+            yearCostDetail.setTotal(0);
+            yearCostDetailList.add(yearCostDetail);
+            fromYear += 1;
+        }
+
+        for(YearCostDetail yearCostDetail: yearCostDetails) {
+            List<YearCostDetail> detailLst = yearCostDetailList.stream().filter(item -> item.getYear() == yearCostDetail.getYear()).collect(Collectors.toList());
+            for (YearCostDetail temp : detailLst) {
+                temp.setTotal(yearCostDetail.getTotal());
+            }
+        }
+        List<YearCostDetailDto> yearCostDetailDtos = IYearCostDetailDtoMapper.INSTANCE.toYearCostDtoList(yearCostDetailList);
+
+        return yearCostDetailDtos;
+    }
+
 }

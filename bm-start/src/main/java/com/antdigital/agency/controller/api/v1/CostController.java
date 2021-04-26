@@ -1,9 +1,7 @@
 package com.antdigital.agency.controller.api.v1;
 
 import com.antdigital.agency.dtos.request.BaseSearchDto;
-import com.antdigital.agency.dtos.response.AgencyDto;
-import com.antdigital.agency.dtos.response.CostDto;
-import com.antdigital.agency.dtos.response.ResponseDto;
+import com.antdigital.agency.dtos.response.*;
 import com.antdigital.agency.services.ICostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -122,4 +120,38 @@ public class CostController extends BaseController{
 
         return result;
     }
+
+    @PostMapping("/getDateCost")
+    public ResponseEntity<?> getDateCost(@RequestBody RangeDateDto rangeDateDto) {
+        if(rangeDateDto.getFromDate() > rangeDateDto.getToDate()){
+            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Ngày bắt đầu phải nhỏ hơn ngày kết thúc"), HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        List<DateCostDetailDto> dateCostDetailDtos = costService.getDateCost(rangeDateDto, getAgencyId());
+
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Chi phí"), HttpStatus.OK.value(), dateCostDetailDtos));
+    }
+
+    @PostMapping("/getMonthCost")
+    public ResponseEntity<?> getMonthCost(@RequestBody RangeDateDto rangeDateDto) {
+        if(rangeDateDto.getFromDate() > rangeDateDto.getToDate()){
+            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Ngày bắt đầu phải nhỏ hơn ngày kết thúc"), HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        List<MonthCostDetailDto> monthCostDetailDtos = costService.getMonthCost(rangeDateDto, getAgencyId());
+
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Chi phí"), HttpStatus.OK.value(), monthCostDetailDtos));
+    }
+
+    @PostMapping("/getYearCost")
+    public ResponseEntity<?> getYearCost(@RequestBody RangeDateDto rangeDateDto) {
+        if(rangeDateDto.getFromDate() > rangeDateDto.getToDate()){
+            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Ngày bắt đầu phải nhỏ hơn ngày kết thúc"), HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        List<YearCostDetailDto> yearCostDtos = costService.getYearCost(rangeDateDto, getAgencyId());
+
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Chi phí"), HttpStatus.OK.value(), yearCostDtos));
+    }
+
 }

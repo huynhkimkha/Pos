@@ -120,4 +120,38 @@ public class BillController extends BaseController {
 
         return result;
     }
+
+    @PostMapping("/getMonthBill")
+    public ResponseEntity<?> getMonthBill(@RequestBody RangeDateDto rangeDateDto) {
+        if(rangeDateDto.getFromDate() > rangeDateDto.getToDate()){
+            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Ngày bắt đầu phải nhỏ hơn ngày kết thúc"), HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        List<MonthBillDetailDto> monthBillDetailDtos = billService.getMonthBill(rangeDateDto, getAgencyId());
+
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Hoá đơn"), HttpStatus.OK.value(), monthBillDetailDtos));
+    }
+
+    @PostMapping("/getDateBill")
+    public ResponseEntity<?> getDateBill(@RequestBody RangeDateDto rangeDateDto) {
+        if(rangeDateDto.getFromDate() > rangeDateDto.getToDate()){
+            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Ngày bắt đầu phải nhỏ hơn ngày kết thúc"), HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        List<DateBillDetailDto> dateBillDetailDtos = billService.getDateBill(rangeDateDto, getAgencyId());
+
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Hoá đơn"), HttpStatus.OK.value(), dateBillDetailDtos));
+    }
+
+    @PostMapping("/getYearBill")
+    public ResponseEntity<?> getYearBill(@RequestBody RangeDateDto rangeDateDto) {
+        if(rangeDateDto.getFromDate() > rangeDateDto.getToDate()){
+            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Ngày bắt đầu phải nhỏ hơn ngày kết thúc"), HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        List<YearBillDetailDto> yearBillDtos = billService.getYearBill(rangeDateDto, getAgencyId());
+
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Hoá đơn"), HttpStatus.OK.value(), yearBillDtos));
+    }
+
 }
