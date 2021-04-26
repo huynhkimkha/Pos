@@ -23,4 +23,7 @@ public interface ICostRepository extends JpaRepository<Cost, String> {
     @Query(value= "select * from cost u where u.agency_id = ?2 and MONTH(u.created_date) = MONTH(?1) and YEAR(u.created_date) = YEAR(?1) " +
             "and cast(format(substring(u.number,4,4),0) as unsigned) >= ALL(select cast(format(substring(u.number,4,4),0) as unsigned) from cost u where u.agency_id = ?2 and MONTH(u.created_date) = MONTH(?1) and YEAR(u.created_date) = YEAR(?1))", nativeQuery=true)
     Cost getCostNumber(Date createdDate, String agencyId);
+
+    @Query("select u from Cost u where u.description = ?1")
+    Cost getByDescription(String description);
 }

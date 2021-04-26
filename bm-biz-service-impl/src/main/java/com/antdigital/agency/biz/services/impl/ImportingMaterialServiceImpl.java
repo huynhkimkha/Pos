@@ -3,6 +3,7 @@ package com.antdigital.agency.biz.services.impl;
 import com.antdigital.agency.common.utils.StringHelper;
 import com.antdigital.agency.common.utils.UUIDHelper;
 import com.antdigital.agency.dal.entity.Cost;
+import com.antdigital.agency.dal.entity.CostCategory;
 import com.antdigital.agency.dal.entity.ImportingMaterial;
 import com.antdigital.agency.dal.entity.ImportingTransaction;
 import com.antdigital.agency.dal.repository.ICostRepository;
@@ -99,6 +100,18 @@ public class ImportingMaterialServiceImpl implements IImportingMaterialService {
                 importingTransactionRepository.save(tempDetail);
             }
 
+            Cost cost = new Cost();
+            cost.setId(UUIDHelper.generateType4UUID().toString());
+            cost.setCode("PCP");
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            cost.setAgency(importingMaterial.getAgency());
+            cost.setNumber(getCostNumber(dt.format(importingMaterial.getCreatedDate()), importingMaterial.getAgency().getId()));
+            cost.setDescription("Phiếu nhập: " + importingMaterial.getNumber());
+            cost.setCostCategory(new CostCategory());
+            cost.getCostCategory().setId("3452f914-2e06-4a6f-9a66-06b62c7cc333");
+            cost.setAmount(importingMaterial.getAmount());
+            cost = costRepository.save(cost);
+
             importingMaterialFullDto.setId(importingMaterial.getId());
             return importingMaterialFullDto;
         } catch (Exception ex) {
@@ -147,6 +160,10 @@ public class ImportingMaterialServiceImpl implements IImportingMaterialService {
                 importingTransaction = importingTransactionRepository.save(importingTransaction);
                 importingTransactionDto = IImportingTransactionDtoMapper.INSTANCE.toImportingTransactionDto(importingTransaction);
             }
+            String description = "Phiếu nhập: " +  importingMaterial.getNumber();
+            Cost cost = costRepository.getByDescription(description);
+            cost.setAmount(importingMaterial.getAmount());
+            cost = costRepository.save(cost);
 
             return importingMaterialDto;
         } catch (Exception ex) {
@@ -164,6 +181,9 @@ public class ImportingMaterialServiceImpl implements IImportingMaterialService {
             for(ImportingTransactionDto detailDto : importingMaterialFullDto.getImportingTransactionList()) {
                 importingTransactionRepository.deleteById(detailDto.getId());
             }
+            String description = "Phiếu nhập: " +  importingMaterialFullDto.getNumber();
+            Cost cost = costRepository.getByDescription(description);
+            costRepository.deleteById(cost.getId());
             importingMaterialRepository.deleteById(id);
             return true;
         } catch (Exception ex) {
@@ -178,6 +198,26 @@ public class ImportingMaterialServiceImpl implements IImportingMaterialService {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             ImportingMaterial result = importingMaterialRepository.getImportingMaterialNumber(sdf.parse(createdDate), agencyId);
+            if (result == null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(sdf.parse(createdDate));
+                int month = cal.get(Calendar.MONTH) + 1;
+                String monthStr = month > 9 ? String.valueOf(month) : "0" + month;
+                return monthStr + "/0001";
+            }
+            String number = result.getNumber();
+            return StringHelper.NumberOfCertificate(number);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            logger.error(ex.getStackTrace().toString());
+            return null;
+        }
+    }
+
+    private String getCostNumber(String createdDate, String agencyId) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Cost result = costRepository.getCostNumber(sdf.parse(createdDate), agencyId);
             if (result == null) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(sdf.parse(createdDate));
