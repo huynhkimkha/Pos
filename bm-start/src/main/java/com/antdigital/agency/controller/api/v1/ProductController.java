@@ -31,6 +31,12 @@ public class ProductController extends BaseController {
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Sản phẩm"), HttpStatus.OK.value(), productDtos));
     }
 
+    @GetMapping("/fullList")
+    public ResponseEntity<?> findAllFull() {
+        List<ProductFullDto> productDtos = productService.findAllFull();
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Sản phẩm"), HttpStatus.OK.value(), productDtos));
+    }
+
     @PostMapping("/find")
     public ResponseEntity<?> find(@RequestBody BaseSearchDto<List<ProductDto>> searchDto) {
         BaseSearchDto<List<ProductDto>> search = productService.findAll(searchDto);
