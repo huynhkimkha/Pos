@@ -255,5 +255,12 @@ public class CostServiceImpl implements ICostService {
 
         return yearCostDetailDtos;
     }
-
+    @Override
+    public List<CostDto> getCostStatistic(RangeDateDto rangeDateDto, String agencyId){
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String fromDateNew = format1.format(rangeDateDto.getFromDate());
+        String toDateNew = format1.format(rangeDateDto.getToDate());
+        List<Cost> costs = costRepository.findByrangeDate(fromDateNew, toDateNew, agencyId);
+        return ICostDtoMapper.INSTANCE.toCostDtoList(costs);
+    }
 }

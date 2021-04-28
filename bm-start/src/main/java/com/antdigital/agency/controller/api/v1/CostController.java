@@ -154,4 +154,15 @@ public class CostController extends BaseController{
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Chi phí"), HttpStatus.OK.value(), yearCostDtos));
     }
 
+    @PostMapping("/getCostStatistic")
+    public ResponseEntity<?> getCostStatistic(@RequestBody RangeDateDto rangeDateDto) {
+        if(rangeDateDto.getFromDate() > rangeDateDto.getToDate()){
+            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Ngày bắt đầu phải nhỏ hơn ngày kết thúc"), HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        List<CostDto> costDto = costService.getCostStatistic(rangeDateDto, getAgencyId());
+
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Chi phí"), HttpStatus.OK.value(), costDto));
+    }
+
 }

@@ -26,4 +26,7 @@ public interface ICostRepository extends JpaRepository<Cost, String> {
 
     @Query("select u from Cost u where u.description = ?1")
     Cost getByDescription(String description);
+
+    @Query( value ="select * from cost u where u.created_date >= ?1 and u.created_date <= ?2 and u.agency_id = ?3", nativeQuery=true)
+    List<Cost> findByrangeDate(String fromDate, String toDate, String agencyId);
 }

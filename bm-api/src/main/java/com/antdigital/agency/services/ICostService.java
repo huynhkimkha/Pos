@@ -16,4 +16,5 @@ public interface ICostService {
     List<MonthCostDetailDto> getMonthCost(RangeDateDto rangeDateDto, String agencyId);
     List<DateCostDetailDto> getDateCost(RangeDateDto rangeDateDto, String agencyId);
     List<YearCostDetailDto> getYearCost(RangeDateDto rangeDateDto, String agencyId);
+    List<CostDto> getCostStatistic(RangeDateDto rangeDateDto, String agencyId);
 }
