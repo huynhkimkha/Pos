@@ -44,6 +44,25 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    public List<ProductFullDto> findAllFull() {
+        List<Product> productList = productRepository.findAll();
+        List<ProductFullDto> productFullDtoList = new ArrayList<>();
+        for(Product product: productList){
+            List<ProductCategory> details = productCategoryRepository.getByProductId(product.getId());
+            List<ProductSize> productSizeList = productSizeRepository.getByProductId(product.getId());
+            ProductFullDto productFullDto = IProductDtoMapper.INSTANCE.toProductFullDto(product);
+            List<ProductCategoryDto> detailDto = IProductCategoryDtoMapper.INSTANCE.toProductCategoryDtoList(details);
+            List<ProductSizeDto> productSizeDtoList = IProductSizeDtoMapper.INSTANCE.toProductSizeDtoList(productSizeList);
+            productFullDto.setProductCategoryList(detailDto);
+            productFullDto.setProductSizeList(productSizeDtoList);
+            productFullDtoList.add(productFullDto);
+        }
+
+
+        return productFullDtoList;
+    }
+
+    @Override
     public BaseSearchDto<List<ProductDto>> findAll(BaseSearchDto<List<ProductDto>> searchDto) {
         if(searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
             searchDto.setResult(this.findAll());
