@@ -1,5 +1,6 @@
 package com.antdigital.agency.biz.services.impl;
 
+import com.antdigital.agency.common.utils.BCryptHelper;
 import com.antdigital.agency.common.utils.UUIDHelper;
 import com.antdigital.agency.dal.entity.*;
 import com.antdigital.agency.dal.repository.*;
@@ -7,6 +8,7 @@ import com.antdigital.agency.dtos.request.BaseSearchDto;
 import com.antdigital.agency.dtos.response.*;
 import com.antdigital.agency.mappers.*;
 import com.antdigital.agency.services.IEmployeeService;
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +95,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
         try {
             Employees employees = IEmployeesDtoMapper.INSTANCE.toEmployees(employeesDto);
             employees.setId(UUIDHelper.generateType4UUID().toString());
+            employees.setPassword(BCryptHelper.encode(employeesDto.getPassword()));
             Employees createdEmployee = employeesRepository.save(employees);
             employeesDto.setId(createdEmployee.getId());
             return employeesDto;

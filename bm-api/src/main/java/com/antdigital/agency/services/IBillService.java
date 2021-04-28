@@ -16,4 +16,5 @@ public interface IBillService {
     List<MonthBillDetailDto> getMonthBill(RangeDateDto rangeDateDto, String agencyId);
     List<DateBillDetailDto> getDateBill(RangeDateDto rangeDateDto, String agencyId);
     List<YearBillDetailDto> getYearBill(RangeDateDto rangeDateDto, String agencyId);
+    List<BillDto> getBillStatistic(RangeDateDto rangeDateDto, String agencyId);
 }

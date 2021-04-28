@@ -154,4 +154,14 @@ public class BillController extends BaseController {
         return ResponseEntity.ok(new ResponseDto(Arrays.asList("Hoá đơn"), HttpStatus.OK.value(), yearBillDtos));
     }
 
+    @PostMapping("/getBillStatistic")
+    public ResponseEntity<?> getBillStatistic(@RequestBody RangeDateDto rangeDateDto) {
+        if(rangeDateDto.getFromDate() > rangeDateDto.getToDate()){
+            return ResponseEntity.ok(new ResponseDto(Arrays.asList("Ngày bắt đầu phải nhỏ hơn ngày kết thúc"), HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        List<BillDto> billDto = billService.getBillStatistic(rangeDateDto, getAgencyId());
+
+        return ResponseEntity.ok(new ResponseDto(Arrays.asList("Hoá đơn"), HttpStatus.OK.value(), billDto));
+    }
 }

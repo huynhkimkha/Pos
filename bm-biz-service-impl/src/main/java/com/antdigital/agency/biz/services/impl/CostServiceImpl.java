@@ -255,6 +255,7 @@ public class CostServiceImpl implements ICostService {
 
         return yearCostDetailDtos;
     }
+
     @Override
     public List<CostDto> getCostStatistic(RangeDateDto rangeDateDto, String agencyId){
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");

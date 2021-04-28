@@ -89,7 +89,8 @@ public class BillServiceImpl implements IBillService {
         try {
             Bill bill = IBillDtoMapper.INSTANCE.toBill(billFullDto);
             bill.setId(UUIDHelper.generateType4UUID().toString());
-            bill = billRepository.save(bill);
+            bill.setPromotion(bill.getPromotion().getId() == null ? null : bill.getPromotion());
+            Bill createdbill = billRepository.save(bill);
 
             for(BillProductSizeDto detail : billFullDto.getBillProductSizeList()) {
                 if (detail.getProductSize() == null || detail.getProductSize().getId() == null
@@ -182,7 +183,8 @@ public class BillServiceImpl implements IBillService {
     public String getNumber(String createdDate, String agencyId) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Bill result = billRepository.getBillNumber(sdf.parse(createdDate), agencyId);
+            Date createdDate2 = sdf.parse(createdDate);
+            Bill result = billRepository.getBillNumber(createdDate2, agencyId);
             if (result == null) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(sdf.parse(createdDate));
@@ -320,4 +322,12 @@ public class BillServiceImpl implements IBillService {
         return yearBillDetailDtos;
     }
 
+    @Override
+    public List<BillDto> getBillStatistic(RangeDateDto rangeDateDto, String agencyId){
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        String fromDateNew = format1.format(rangeDateDto.getFromDate());
+        String toDateNew = format1.format(rangeDateDto.getToDate());
+        List<Bill> bills = billRepository.findByrangeDate(fromDateNew, toDateNew, agencyId);
+        return IBillDtoMapper.INSTANCE.toBillDtoList(bills);
+    }
 }
