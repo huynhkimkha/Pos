@@ -58,6 +58,23 @@ public class ProductServiceImpl implements IProductService {
             productFullDtoList.add(productFullDto);
         }
 
+        return productFullDtoList;
+    }
+
+    @Override
+    public List<ProductFullDto> findAllFullByCateId(String cateId) {
+        List<Product> productList = productRepository.getProductsByCateId(cateId);
+        List<ProductFullDto> productFullDtoList = new ArrayList<>();
+        for(Product product: productList){
+            List<ProductCategory> details = productCategoryRepository.getByProductId(product.getId());
+            List<ProductSize> productSizeList = productSizeRepository.getByProductId(product.getId());
+            ProductFullDto productFullDto = IProductDtoMapper.INSTANCE.toProductFullDto(product);
+            List<ProductCategoryDto> detailDto = IProductCategoryDtoMapper.INSTANCE.toProductCategoryDtoList(details);
+            List<ProductSizeDto> productSizeDtoList = IProductSizeDtoMapper.INSTANCE.toProductSizeDtoList(productSizeList);
+            productFullDto.setProductCategoryList(detailDto);
+            productFullDto.setProductSizeList(productSizeDtoList);
+            productFullDtoList.add(productFullDto);
+        }
 
         return productFullDtoList;
     }

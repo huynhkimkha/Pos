@@ -23,4 +23,8 @@ public interface IProductRepository extends JpaRepository<Product, String> {
 
     @Query("select t from Product t where t.id in (?1)")
     List<Product> getProductsById(List<String> ids);
+
+    @Query("select t from Product t join ProductCategory p on t.id = p.product.id where p.category.id = ?1 ")
+    List<Product> getProductsByCateId(String cateId);
+
 }

@@ -9,6 +9,7 @@ import java.util.List;
 public interface IProductService {
     List<ProductDto> findAll();
     List<ProductFullDto> findAllFull();
+    List<ProductFullDto> findAllFullByCateId(String cateId);
     BaseSearchDto<List<ProductDto>> findAll(BaseSearchDto<List<ProductDto>> searchDto);
     ProductDto getById(String id);
     ProductDto getBySlug(String nameSlug);
