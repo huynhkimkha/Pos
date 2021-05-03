@@ -17,7 +17,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,12 +38,16 @@ public class PromotionServiceImpl implements IPromotionService {
 
     @Override
     public List<PromotionDto> findAll() {
-        List<Promotion> promotionList = promotionRepository.findAll();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        List<Promotion> promotionList = promotionRepository.findAllPromotion(dtf.format(now));
         return IPromotionDtoMapper.INSTANCE.toPromotionDtoList(promotionList);
     }
 
     @Override
     public BaseSearchDto<List<PromotionDto>> findAll(BaseSearchDto<List<PromotionDto>> searchDto) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
         if(searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
             searchDto.setResult(this.findAll());
             return searchDto;
@@ -51,7 +60,7 @@ public class PromotionServiceImpl implements IPromotionService {
         PageRequest request = sort == null ? PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage())
                 : PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage(), sort);
 
-        Page<Promotion> page = promotionRepository.findAll(request);
+        Page<Promotion> page = promotionRepository.findAllPage(request, dtf.format(now));
         searchDto.setTotalRecords(page.getTotalElements());
         searchDto.setResult(IPromotionDtoMapper.INSTANCE.toPromotionDtoList(page.getContent()));
 
@@ -73,7 +82,6 @@ public class PromotionServiceImpl implements IPromotionService {
             return null;
         }
     }
-
 
     @Override
     @Transactional
